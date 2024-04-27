@@ -1,0 +1,54 @@
+Database schema:
+
+User:
+--userID,
+--userName,
+--email,
+--password
+
+Recipe:
+--recipeID,
+--userID,
+--title,
+--description,
+--ingredients (it's an array of strings),
+--category,
+--upvotes,
+--recipeImage (path or smth to the image in the S3 Bucket)
+
+THE FOLLOWING APIs NEED TO BE IMPLEMENTED IN THE BACKEND:
+
+1. Signup
+   INPUTS:
+   userName, email, password
+
+2. Login
+   INPUTS:
+   email, password
+
+3. Logout
+
+4. getAllRecipes
+   Recipe structure:
+   {
+   recipeID: 4,
+   userID: 'user4',
+   userName: 'User 4',
+   title: 'Spaghetti Bolognese',
+   description: 'Classic Italian pasta dish with meaty tomato sauce.',
+   ingredients: ['Spaghetti', 'Ground beef', 'Tomato sauce', 'Onion', 'Garlic'],
+   image: recipe1,
+   category: 'Main Course',
+   },
+
+5. getRecipeByID
+   (get one recipe by ID)
+   INPUTS:
+   recipeID
+
+6. getAllMyRecipes
+   (get all recipes belonging to the current signed in user)
+
+7. createNewRecipe
+   INPUTS:
+   userID, userName, title, description, ingredients, category, image

@@ -1,8 +1,32 @@
 import { Link } from 'react-router-dom';
-
 import loginbg from '../../assets/images/loginbg.jpg';
+import React, { useState } from 'react';
 
 function SignupPage() {
+	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+
+	const handleUsernameChange = (event) => {
+		setUsername(event.target.value);
+	};
+
+	const handleEmailChange = (event) => {
+		setEmail(event.target.value);
+	};
+
+	const handlePasswordChange = (event) => {
+		setPassword(event.target.value);
+	};
+
+	const handleSignup = () => {
+		// Add your signup logic here
+		console.log('Signup button clicked');
+		console.log('Username:', username);
+		console.log('Email:', email);
+		console.log('Password:', password);
+	};
+
 	return (
 		<>
 			<section class="mb-32">
@@ -17,49 +41,70 @@ function SignupPage() {
 								<div className="text-center lg:text-left">
 									<h1 className="text-5xl font-bold text-white">Signup now!</h1>
 									<p className="py-6 text-white">
-										Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-										excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a
-										id nisi.
+										Discover the flavors of the world with our curated collection of
+										mouthwatering recipes. From comforting classics to exotic delights,
+										embark on a culinary journey like no other. SIGN UP NOW AND JOIN US!
 									</p>
 								</div>
 								<div className="card shrink-0 w-full max-w-sm">
 									<form className="card-body">
 										<div className="form-control">
+											{/* USERNAME INPUT */}
 											<label className="label">
 												<span className="label-text text-white">Username</span>
 											</label>
-											<input
-												type="text"
-												placeholder="username"
-												className="input input-bordered"
-												required
-											/>
+											<label className="input input-bordered flex items-center gap-2">
+												<input
+													type="text"
+													className="grow"
+													placeholder="Username"
+													value={username}
+													onChange={handleUsernameChange}
+													required
+												/>
+											</label>
+											{/* EMAIL INPUT */}
 											<label className="label">
 												<span className="label-text text-white">Email</span>
 											</label>
-											<input
-												type="email"
-												placeholder="email"
-												className="input input-bordered"
-												required
-											/>
+											<label className="input input-bordered flex items-center gap-2">
+												<input
+													type="text"
+													className="grow"
+													placeholder="Email"
+													value={email}
+													onChange={handleEmailChange}
+													required
+												/>
+											</label>
 										</div>
 										<div className="form-control">
+											{/* PASSWORD INPUT */}
 											<label className="label">
 												<span className="label-text text-white">Password</span>
 											</label>
-											<input
-												type="password"
-												placeholder="password"
-												className="input input-bordered"
-												required
-											/>
+											<label className="input input-bordered flex items-center gap-2">
+												<input
+													type="password"
+													className="grow"
+													placeholder="Password"
+													value={password}
+													onChange={handlePasswordChange}
+													required
+												/>
+											</label>
 										</div>
+										{/* SIGN UP BUTTON */}
 										<div className="form-control mt-6">
-											<button className="btn btn-primary text-white">Signup</button>
+											<button
+												className="btn btn-accent text-white"
+												onClick={handleSignup}
+											>
+												Signup
+											</button>
 										</div>
 										<label className="label">
-											<Link to="/" className="label-text-alt link text-neutral-content">
+											<Link to="/" className="label-text-alt link text-accent">
 												Already have an account? Login now!
 											</Link>
 										</label>

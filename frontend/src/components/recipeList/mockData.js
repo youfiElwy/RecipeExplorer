@@ -10,6 +10,7 @@ const mockData = [
 		ingredients: ['Spaghetti', 'Eggs', 'Parmesan cheese', 'Bacon', 'Black pepper'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 87,
 	},
 	{
 		recipeID: 2,
@@ -20,6 +21,7 @@ const mockData = [
 		ingredients: ['Chicken', 'Onion', 'Tomato', 'Coconut milk', 'Curry powder'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 92,
 	},
 	{
 		recipeID: 3,
@@ -36,6 +38,7 @@ const mockData = [
 		],
 		image: recipe1,
 		category: 'Salads',
+		upvotes: 65,
 	},
 	{
 		recipeID: 4,
@@ -46,6 +49,7 @@ const mockData = [
 		ingredients: ['Spaghetti', 'Ground beef', 'Tomato sauce', 'Onion', 'Garlic'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 78,
 	},
 	{
 		recipeID: 5,
@@ -56,6 +60,7 @@ const mockData = [
 		ingredients: ['All-purpose flour', 'Sugar', 'Cocoa powder', 'Butter', 'Eggs'],
 		image: recipe1,
 		category: 'Desserts',
+		upvotes: 88,
 	},
 	{
 		recipeID: 6,
@@ -66,6 +71,7 @@ const mockData = [
 		ingredients: ['Arborio rice', 'Mushrooms', 'Chicken broth', 'Parmesan cheese', 'Onion'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 73,
 	},
 	{
 		recipeID: 7,
@@ -76,6 +82,7 @@ const mockData = [
 		ingredients: ['Carrots', 'Potatoes', 'Celery', 'Onion', 'Vegetable broth'],
 		image: recipe1,
 		category: 'Soups',
+		upvotes: 61,
 	},
 	{
 		recipeID: 8,
@@ -87,6 +94,7 @@ const mockData = [
 		ingredients: ['Ladyfingers', 'Mascarpone cheese', 'Eggs', 'Sugar', 'Coffee'],
 		image: recipe1,
 		category: 'Desserts',
+		upvotes: 90,
 	},
 	{
 		recipeID: 9,
@@ -104,6 +112,7 @@ const mockData = [
 		],
 		image: recipe1,
 		category: 'Salads',
+		upvotes: 83,
 	},
 	{
 		recipeID: 10,
@@ -114,6 +123,7 @@ const mockData = [
 		ingredients: ['Beef', 'Mushrooms', 'Sour cream', 'Onion', 'Paprika'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 79,
 	},
 	{
 		recipeID: 11,
@@ -125,6 +135,7 @@ const mockData = [
 		ingredients: ['Tomatoes', 'Cucumbers', 'Olives', 'Feta cheese', 'Olive oil'],
 		image: recipe1,
 		category: 'Salads',
+		upvotes: 72,
 	},
 	{
 		recipeID: 12,
@@ -135,6 +146,7 @@ const mockData = [
 		ingredients: ['Chicken breasts', 'Lemon', 'Garlic', 'Chicken broth', 'Thyme'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 82,
 	},
 	{
 		recipeID: 13,
@@ -146,6 +158,7 @@ const mockData = [
 		ingredients: ['Eggplant', 'Zucchini', 'Bell peppers', 'Tomatoes', 'Garlic'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 69,
 	},
 	{
 		recipeID: 14,
@@ -156,6 +169,7 @@ const mockData = [
 		ingredients: ['Apples', 'Sugar', 'Cinnamon', 'Flour', 'Butter'],
 		image: recipe1,
 		category: 'Desserts',
+		upvotes: 85,
 	},
 	{
 		recipeID: 15,
@@ -167,6 +181,7 @@ const mockData = [
 		ingredients: ['Eggs', 'Tomatoes', 'Bell peppers', 'Onion', 'Cumin'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 77,
 	},
 	{
 		recipeID: 16,
@@ -177,6 +192,7 @@ const mockData = [
 		ingredients: ['Pumpkin', 'Onion', 'Garlic', 'Vegetable broth', 'Cream'],
 		image: recipe1,
 		category: 'Soups',
+		upvotes: 63,
 	},
 	{
 		recipeID: 17,
@@ -187,6 +203,7 @@ const mockData = [
 		ingredients: ['Tofu', 'Broccoli', 'Carrots', 'Soy sauce', 'Ginger'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 76,
 	},
 	{
 		recipeID: 18,
@@ -197,6 +214,7 @@ const mockData = [
 		ingredients: ['Bananas', 'Flour', 'Sugar', 'Walnuts', 'Butter'],
 		image: recipe1,
 		category: 'Breads',
+		upvotes: 80,
 	},
 	{
 		recipeID: 19,
@@ -208,6 +226,7 @@ const mockData = [
 		ingredients: ['Quinoa', 'Cucumber', 'Tomatoes', 'Lemon juice', 'Olive oil'],
 		image: recipe1,
 		category: 'Salads',
+		upvotes: 70,
 	},
 	{
 		recipeID: 20,
@@ -218,6 +237,7 @@ const mockData = [
 		ingredients: ['Ground beef', 'Taco shells', 'Tomatoes', 'Lettuce', 'Cheddar cheese'],
 		image: recipe1,
 		category: 'Main Course',
+		upvotes: 75,
 	},
 	{
 		recipeID: 21,
@@ -228,6 +248,7 @@ const mockData = [
 		ingredients: ['Flour', 'Milk', 'Eggs', 'Butter', 'Maple syrup'],
 		image: recipe1,
 		category: 'Breakfast',
+		upvotes: 84,
 	},
 	{
 		recipeID: 22,
@@ -238,6 +259,7 @@ const mockData = [
 		ingredients: ['Mango', 'Yogurt', 'Honey', 'Ice cubes', 'Milk'],
 		image: recipe1,
 		category: 'Beverages',
+		upvotes: 68,
 	},
 ];
 
