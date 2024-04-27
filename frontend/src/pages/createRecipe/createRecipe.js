@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/navbar/navbar';
 import Footer from '../../components/footer/footer';
-import mockData from '../../components/recipeList/mockData';
+import RecipeImage from '../../assets/images/recipeImage.jpg';
 
 function CreateRecipePage() {
 	const [title, setTitle] = useState('');
@@ -9,6 +9,36 @@ function CreateRecipePage() {
 	const [description, setDescription] = useState('');
 	const [inputValue, setInputValue] = useState('');
 	const [ingredients, setIngredients] = useState([]);
+
+	// START      STUFF BELONGING TO IMAGE UPLOAD
+	const [addImage, setAddImage] = useState({ myFile: '' });
+	const [added, setAdded] = useState(false);
+
+	const convertToBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const fileReader = new FileReader();
+			fileReader.readAsDataURL(file);
+			fileReader.onload = () => {
+				resolve(fileReader.result);
+			};
+			fileReader.onerror = (error) => {
+				reject(error);
+			};
+		});
+	};
+
+	const handleProfilePicUpload = async (e) => {
+		const file = e.target.files[0];
+		if (!file) {
+			setAddImage({ myFile: '' });
+			setAdded(false);
+			return;
+		}
+		const base64 = await convertToBase64(file);
+		setAddImage({ ...addImage, myFile: base64 });
+		setAdded(true);
+	};
+	// END      STUFF BELONGING TO IMAGE UPLOAD
 
 	const handleInputChange = (event) => {
 		setInputValue(event.target.value);
@@ -23,7 +53,7 @@ function CreateRecipePage() {
 
 	const handleAddRecipe = () => {
 		// Check if title, description, category, and ingredients are not empty
-		if (!title || !description || !category || ingredients.length === 0) {
+		if (!title || !description || !category || ingredients.length === 0 || !added) {
 			alert('Please fill in all fields');
 			return;
 		}
@@ -57,6 +87,8 @@ function CreateRecipePage() {
 		setDescription('');
 		setCategory('');
 		setIngredients([]);
+		setAddImage({ myFile: '' });
+		setAdded(false);
 	};
 
 	return (
@@ -65,11 +97,45 @@ function CreateRecipePage() {
 			<div className="h-full">
 				<div className="hero min-h-screen">
 					<div className="hero-content flex-col lg:flex-row-reverse">
-						<img
-							src={mockData[0].image}
-							alt="recipeImage"
-							className="w-96 xl:w-1/2 rounded-lg shadow-2xl"
-						/>
+						{/* START OF IMAGE INPUT */}
+
+						{/* START PROFILE PICTURE PLACEHOLDER */}
+						<div className="profilePic">
+							<label htmlFor="file-upload">
+								<h2 className="card-title mt-8 text-3xl mb-4">Recipe Picture</h2>
+
+								{!added ? (
+									<div className="w-96 h-96 overflow-hidden rounded-3xl shadow-2xl">
+										<img
+											src={RecipeImage}
+											alt="recipeImage"
+											className="w-full h-full object-cover"
+										/>
+									</div>
+								) : (
+									<div className="w-96 h-96 overflow-hidden rounded-3xl shadow-2xl">
+										<img
+											className="w-full h-full object-cover"
+											src={addImage.myFile}
+											alt=""
+										/>
+									</div>
+								)}
+							</label>
+							<input
+								className="ppInput"
+								type="file"
+								lable="Image"
+								name="myFile"
+								id="file-upload"
+								accept=".jpeg, .png, .jpg"
+								onChange={(e) => handleProfilePicUpload(e)}
+							/>
+						</div>
+						{/* END PROFILE PICTURE PLACEHOLDER */}
+
+						{/* END OF IMAGE INPUT */}
+
 						<div>
 							<div className="card-body">
 								<input
@@ -85,9 +151,7 @@ function CreateRecipePage() {
 									onChange={(e) => setCategory(e.target.value)}
 									className="select select-bordered select-xs w-full max-w-xs"
 								>
-									<option disabled selected>
-										Choose a category
-									</option>
+									<option selected>Choose a category</option>
 									<option value="Appetizer">Appetizer</option>
 									<option value="Soups">Soups</option>
 									<option value="Salads">Salads</option>
@@ -143,6 +207,7 @@ function CreateRecipePage() {
 					</div>
 				</div>
 			</div>
+
 			<Footer />
 		</>
 	);
