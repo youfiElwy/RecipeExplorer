@@ -6,6 +6,7 @@ import mockData from '../../components/recipeList/mockData';
 function RecipeDetailsPage() {
 	const { id } = useParams(); // Get recipe ID from URL parameter
 	const [recipe, setRecipe] = useState(null); // State to store the fetched recipe
+	const [currentUser, setCurrentUser] = useState('123'); // Simulated current user ID
 
 	useEffect(() => {
 		// Simulate fetching recipe from backend based on ID
@@ -16,9 +17,18 @@ function RecipeDetailsPage() {
 		}
 	}, [id]);
 
+	const handleDeleteRecipeClicked = () => {
+		// Simulate API call to delete recipe
+		console.log('Deleting recipe with ID:', recipe.recipeID);
+	};
+
 	if (!recipe) {
 		return <div>Loading...</div>;
 	}
+
+	// Check if the current user is the creator of the recipe
+	// const isCurrentUserRecipeOwner = currentUser === recipe.userID;
+	const isCurrentUserRecipeOwner = true;
 
 	return (
 		<>
@@ -33,7 +43,18 @@ function RecipeDetailsPage() {
 						<div>
 							<div className="card-body">
 								<h1 className="text-5xl font-bold">{recipe.title}</h1>
-								<div className="badge badge-accent">{recipe.category}</div>
+								<div className="flex justify-between items-center">
+									<div className="badge badge-accent">{recipe.category}</div>
+									{/* Render delete button only for recipe owner */}
+									{isCurrentUserRecipeOwner && (
+										<button
+											className="btn btn-xs btn-outline btn-error"
+											onClick={handleDeleteRecipeClicked}
+										>
+											Delete Recipe
+										</button>
+									)}
+								</div>
 								<p className="text-xs">{'Created by ' + recipe.userName}</p>
 								<h2 className="card-title mt-8 text-3xl">Description</h2>
 								<p>{recipe.description}</p>
