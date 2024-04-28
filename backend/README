@@ -54,3 +54,9 @@ THE FOLLOWING APIs NEED TO BE IMPLEMENTED IN THE BACKEND:
 7. createNewRecipe
    INPUTS:
    userID, userName, title, description, ingredients, category, image
+
+8. updateRecipeByID
+   INPUTS:
+   recipeID, userID, userName, title, description, ingredients, category, image
+
+9. deleteRecipeByID
