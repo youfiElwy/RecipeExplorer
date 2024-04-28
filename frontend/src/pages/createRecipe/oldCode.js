@@ -11,21 +11,32 @@ function CreateRecipePage() {
 	const [ingredients, setIngredients] = useState([]);
 
 	// START      STUFF BELONGING TO IMAGE UPLOAD
-	const [file, setFile] = useState(RecipeImage);
+	const [addImage, setAddImage] = useState({ myFile: '' });
 	const [added, setAdded] = useState(false);
 
-	const handleProfilePicUpload = (e) => {
-		const image = e.target.files[0];
+	const convertToBase64 = (file) => {
+		return new Promise((resolve, reject) => {
+			const fileReader = new FileReader();
+			fileReader.readAsDataURL(file);
+			fileReader.onload = () => {
+				resolve(fileReader.result);
+			};
+			fileReader.onerror = (error) => {
+				reject(error);
+			};
+		});
+	};
 
-		setFile(image);
-		if (!image) {
+	const handleProfilePicUpload = async (e) => {
+		const file = e.target.files[0];
+		if (!file) {
+			setAddImage({ myFile: '' });
 			setAdded(false);
 			return;
 		}
+		const base64 = await convertToBase64(file);
+		setAddImage({ ...addImage, myFile: base64 });
 		setAdded(true);
-
-		console.log(image);
-		console.log(file);
 	};
 	// END      STUFF BELONGING TO IMAGE UPLOAD
 
@@ -46,7 +57,7 @@ function CreateRecipePage() {
 		setIngredients(updatedIngredients);
 	};
 
-	const handleAddRecipe = async () => {
+	const handleAddRecipe = () => {
 		// Check if title, description, category, and ingredients are not empty
 		if (!title || !description || !category || ingredients.length === 0 || !added) {
 			alert('Please fill in all fields');
@@ -77,18 +88,12 @@ function CreateRecipePage() {
 			ingredients,
 		});
 
-		const formData = new FormData();
-		formData.append('image', file);
-		// const response = await axios.post('/recipes/posts', formData, {
-		// 	headers: { 'Content-Type': 'multipart/form-data' },
-		// });
-		// console.log(response.data);
-
 		// Clear the input fields after adding the recipe
 		setTitle('');
 		setDescription('');
 		setCategory('');
 		setIngredients([]);
+		setAddImage({ myFile: '' });
 		setAdded(false);
 	};
 
@@ -117,8 +122,8 @@ function CreateRecipePage() {
 									<div className="w-96 h-96 overflow-hidden rounded-3xl shadow-2xl">
 										<img
 											className="w-full h-full object-cover"
-											src={URL.createObjectURL(file)}
-											alt="recipeImage"
+											src={addImage.myFile}
+											alt=""
 										/>
 									</div>
 								)}
