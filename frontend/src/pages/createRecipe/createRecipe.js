@@ -14,6 +14,16 @@ function CreateRecipePage() {
 	const [addImage, setAddImage] = useState({ myFile: '' });
 	const [added, setAdded] = useState(false);
 
+	const submit = async event => {
+		event.preventDefault()
+	
+		const formData = new FormData();
+		formData.append("image", file)
+		formData.append("caption", caption)
+		const response = await axios.post("/recipes/posts", formData, { headers: {'Content-Type': 'multipart/form-data'}})
+		console.log(response.data)
+	  }
+
 	const convertToBase64 = (file) => {
 		return new Promise((resolve, reject) => {
 			const fileReader = new FileReader();
@@ -87,6 +97,8 @@ function CreateRecipePage() {
 			description,
 			ingredients,
 		});
+
+
 
 		// Clear the input fields after adding the recipe
 		setTitle('');

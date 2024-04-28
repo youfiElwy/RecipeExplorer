@@ -1,20 +1,17 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
-const cors = require('cors');
-const authorizationMiddleware = require("./middleware/authorizationMiddleware");
+const PORT = 3000;
 const authenticationMiddleware = require("./middleware/authenticationMiddleware");
-
-require('dotenv').config();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/auth', require('./routes/public/auth'));
+
 app.use(authenticationMiddleware);
 
-// Define routes
-app.use('/', require('./routes/index'));
+app.use('/recipe', require('./routes/private/recipe'));
 
 // Start server
 app.listen(PORT, () => {
