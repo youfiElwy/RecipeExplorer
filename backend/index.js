@@ -1,19 +1,19 @@
 const express = require('express');
+const http = require("http");
 const cors = require("cors");
 const cookieParser = require('cookie-parser')
 const app = express();
 const PORT = 5000;
 const authenticationMiddleware = require("./middleware/authenticationMiddleware");
 
-// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true
   })

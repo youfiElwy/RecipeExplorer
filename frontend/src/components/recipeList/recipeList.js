@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RecipeCard from '../../components/recipeCard/recipeCard';
 import mockData from './mockData';
+import axios from 'axios';
 
 function RecipeList() {
 	const [recipes, setRecipes] = useState([]);
@@ -8,8 +9,12 @@ function RecipeList() {
 	const [selectedCategory, setSelectedCategory] = useState('');
 
 	useEffect(() => {
-		// Simulate fetching data from the backend (using mockData)
-		setRecipes(mockData);
+		async function fetchData() {
+			const response = await axios.get('http://localhost:5000/recipe/getall', { withCredentials: true });
+			console.log(response.data);
+			setRecipes(response.data);
+		}
+		fetchData();
 	}, []);
 
 	const handleSearch = (query) => {

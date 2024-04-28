@@ -9,7 +9,7 @@ const recipeController = require("../../controllers/recipesController");
 
 router.get("/getall", recipeController.getAllRecipes);
 router.get("/get/:id", recipeController.getRecipeById);
-router.get("/getuserid/:id", recipeController.getRecipeByUserId);
+router.get("/getuserrecipes/:id", recipeController.getUserRecipes);
 
 router.post("/create", upload.single('image'),recipeController.createRecipe);
 
