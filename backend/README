@@ -33,14 +33,14 @@ THE FOLLOWING APIs NEED TO BE IMPLEMENTED IN THE BACKEND:
 4. getAllRecipes
    Recipe structure:
    {
-   recipeID: 4,
-   userID: 'user4',
-   userName: 'User 4',
-   title: 'Spaghetti Bolognese',
-   description: 'Classic Italian pasta dish with meaty tomato sauce.',
-   ingredients: ['Spaghetti', 'Ground beef', 'Tomato sauce', 'Onion', 'Garlic'],
-   image: recipe1,
-   category: 'Main Course',
+      recipeID: 4,
+      userID: 'user4',
+      userName: 'User 4',
+      title: 'Spaghetti Bolognese',
+      description: 'Classic Italian pasta dish with meaty tomato sauce.',
+      ingredients: ['Spaghetti', 'Ground beef', 'Tomato sauce', 'Onion', 'Garlic'],
+      image: recipe1,
+      category: 'Main Course',
    },
 
 5. getRecipeByID
