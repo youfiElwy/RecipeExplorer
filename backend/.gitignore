@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# credintials
+eks.json
+
 # production
 /build
 

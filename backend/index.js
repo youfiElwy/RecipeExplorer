@@ -1,11 +1,17 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
+const authenticationMiddleware = require("./middleware/authenticationMiddleware");
 
-// Define routes
-app.get('/', (req, res) => {
-	res.send('Hello from Express server!');
-});
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/auth', require('./routes/public/auth'));
+
+app.use(authenticationMiddleware);
+
+app.use('/recipe', require('./routes/private/recipe'));
 
 // Start server
 app.listen(PORT, () => {
