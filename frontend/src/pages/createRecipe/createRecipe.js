@@ -51,6 +51,12 @@ function CreateRecipePage() {
 		}
 	};
 
+	const handleRemoveIngredient = (index) => {
+		const updatedIngredients = [...ingredients];
+		updatedIngredients.splice(index, 1);
+		setIngredients(updatedIngredients);
+	};
+
 	const handleAddRecipe = () => {
 		// Check if title, description, category, and ingredients are not empty
 		if (!title || !description || !category || ingredients.length === 0 || !added) {
@@ -192,7 +198,11 @@ function CreateRecipePage() {
 
 									<div className="flex flex-wrap mt-2">
 										{ingredients.map((ingredient, index) => (
-											<div key={index} className="badge badge-outline mr-2 mb-2">
+											<div
+												key={index}
+												className="badge badge-outline mr-2 mb-2 cursor-pointer"
+												onClick={() => handleRemoveIngredient(index)}
+											>
 												{ingredient}
 											</div>
 										))}
