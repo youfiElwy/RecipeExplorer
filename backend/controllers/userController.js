@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const speakeasy = require("speakeasy");
 
 var AWS = require('aws-sdk');
-var eks = require('./eks.json');
+var eks = require('../eks.json');
 
 var region = eks.AWS_REGION;
 var accessKeyId = eks.AWS_ACCESS_KEY_ID;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../../components/navbar/navbar';
 import Footer from '../../components/footer/footer';
 import RecipeImage from '../../assets/images/recipeImage.jpg';
+import axios from 'axios';
 
 function CreateRecipePage() {
 	const [title, setTitle] = useState('');
@@ -79,10 +80,14 @@ function CreateRecipePage() {
 
 		const formData = new FormData();
 		formData.append('image', file);
-		// const response = await axios.post('/recipes/posts', formData, {
-		// 	headers: { 'Content-Type': 'multipart/form-data' },
-		// });
-		// console.log(response.data);
+		formData.append('title', title);
+		formData.append('description', description);
+		formData.append('ingredients', ingredients);
+		formData.append('category', category);
+		const response = await axios.post('http://localhost:5000/recipe/create', formData, {
+			headers: { 'Content-Type': 'multipart/form-data' },
+		});
+		console.log(response.data);
 
 		// Clear the input fields after adding the recipe
 		setTitle('');
