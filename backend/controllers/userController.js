@@ -1,19 +1,33 @@
-const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const { createUserDB, getUserByEmailDB } = require('../models/dynamoDB');
 
 
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return [salt, hash];
+async function hashPassword(password) {
+  try {
+    // Generate a salt
+    const salt = await bcrypt.genSalt(10);
+    // Hash the password with the salt
+    const hash = await bcrypt.hash(password, salt);
+    return [salt, hash];
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    throw error;
+  }
 }
 
-function verifyPassword(password, hash, salt) {
-  const verifyHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return verifyHash === hash;
+async function verifyPassword(password, hash, salt) {
+  try {
+    // Hash the provided password with the given salt
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // Compare the resulting hash with the provided hash
+    const result = hashedPassword === hash;
+    return result;
+  } catch (error) {
+    console.error('Error verifying password:', error);
+    throw error;
+  }
 }
 
 const userController =
@@ -43,7 +57,7 @@ const userController =
       }
 
       //hash and salt password
-      const hash = hashPassword(password);
+      const hash = await hashPassword(password);
 
       const result = await createUserDB(userName, email, hash[0], hash[1]).then((data) => data).catch((error) => error);
 
@@ -74,7 +88,7 @@ const userController =
       //check if email exists and password matches
       const user = await getUserByEmailDB(email).then((data) => data).catch((error) => error);
 
-      if (user.Count == 0 || !verifyPassword(password, user.Items[0].hashedPassword.S, user.Items[0].salt.S)) {
+      if (user.Count == 0 || ! await verifyPassword(password, user.Items[0].hashedPassword.S, user.Items[0].salt.S)) {
         return res.status(400).json({ error: 'Email or password is incorrect' });
       }
 
