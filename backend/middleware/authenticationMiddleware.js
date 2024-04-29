@@ -1,27 +1,24 @@
-// Just a copy of past code, no changes made
-const jwt = require("jsonwebtoken");
-const secretKey = process.env.SECRET_KEY;
+const jwt = require('jsonwebtoken');
 
-module.exports = function authenticationMiddleware(req, res, next) {
-  const cookie = req.headers.cookie;
+module.exports = async function (req, res, next) {
+	// Check if the cookie exists and has a value
+	const cookieValue = req.headers.cookie && req.headers.cookie.substring(4);
+	if (!cookieValue) {
+		return res.status(301).redirect('/');
+	}
 
-  if (!cookie) {
-    return res.status(401).json({ message: "No Cookie provided" });
-  }
-  const token = cookie.split("token=")[1];
-  if (!token) {
-    return res.status(405).json({ message: "No token provided" });
-  }
+	// Verify the JWT token from the cookie
+	let user = null;
+	try {
+		user = jwt.verify(cookieValue, process.env.JWT);
+	} catch (err) {
+		return res.status(301).redirect('/');
+	}
 
-  jwt.verify(token, secretKey, (error, decoded) => {
-    if (error) {
-      return res.status(403).json({ message: "Invalid token" });
-    }
-
-    // Attach the decoded user ID to the request object for further use
-    
-    req.user = decoded.user;
-    console.log("authenticationMiddleware: req.user: ", req.user);
-    return next();
-  });
+	// Check if the session has expired
+	if (new Date() > new Date(user.expiresAt)) {
+		return res.status(301).redirect('/');
+	}
+	
+	next();
 };
