@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require('cookie-parser')
 const app = express();
 const PORT = 5000;
+require('dotenv').config();
 const authenticationMiddleware = require("./middleware/authenticationMiddleware");
 
 app.use(express.json());
@@ -19,9 +20,9 @@ app.use(
   })
 );
 
-// app.use('/auth', require('./routes/public/auth'));
+app.use('/auth', require('./routes/public/auth'));
 
-// app.use(authenticationMiddleware);
+app.use(authenticationMiddleware);
 
 app.use('/recipe', require('./routes/private/recipe'));
 
