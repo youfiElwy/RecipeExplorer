@@ -13,18 +13,15 @@ const dynamoDB = new AWS.DynamoDB({
     region: region,
     accessKeyId: accessKeyId,
     secretAccessKey: secretAccessKey,
-  });
+});
 
 module.exports = {
-    createUserDB: async ( userName, email, salt, hashedPassword) => {
-        const existingUser = await getUserByName(userName);
-        if (existingUser) {
-            return Promise.reject("User Name taken!");
-        }
+    createUserDB: async (userName, email, salt, hashedPassword) => {
+
         const params = {
             TableName: usersTable,
             Item: {
-                "userID": { N: Math.floor(Math.random() * 1000000000).toString() },
+                "userID": { S: Math.floor(Math.random() * 1000000000).toString() },
                 "userName": { S: userName },
                 "email": { S: email },
                 "salt": { S: salt },
@@ -34,17 +31,21 @@ module.exports = {
         return dynamoDB.putItem(params).promise();
     },
 
-    getUserByNameDB: async ( userName ) => {
+    getUserByEmailDB: async (email) => {
         const params = {
             TableName: usersTable,
-            Key: {
-                "email": { S: email }
+            FilterExpression: "#email = :emailValue",
+            ExpressionAttributeNames: {
+                "#email": "email"
+            },
+            ExpressionAttributeValues: {
+                ":emailValue": { S: email }
             }
         };
-        return dynamoDB.getItem(params).promise();
+        return dynamoDB.scan(params).promise();
     },
 
-    getUserByIdDB: async ( userID ) => {
+    getUserByIdDB: async (userID) => {
         const params = {
             TableName: usersTable,
             Key: {
@@ -54,7 +55,7 @@ module.exports = {
         return dynamoDB.getItem(params).promise();
     },
 
-    createRecipeDB: async ( userID, userName, title, description, ingredients, category, imageName) => {
+    createRecipeDB: async (userID, userName, title, description, ingredients, category, imageName) => {
         const res = await dynamoDB.putItem({
             TableName: recipesTable,
             Item: {
@@ -67,7 +68,8 @@ module.exports = {
                 "category": { S: category },
                 "image": { S: imageName },
                 "upvotes": { N: "0" },
-            }}).promise();
+            }
+        }).promise();
         return res;
     },
 
@@ -78,7 +80,7 @@ module.exports = {
         return res;
     },
 
-    getRecipeByIdDB( recipeID ) {
+    getRecipeByIdDB(recipeID) {
         const params = {
             TableName: recipesTable,
             Key: {
@@ -88,7 +90,7 @@ module.exports = {
         return dynamoDB.getItem(params).promise();
     },
 
-    getRecipesByUserDB( userID ) {
+    getRecipesByUserDB(userID) {
         const params = {
             TableName: recipesTable,
             KeyConditionExpression: "userID = :userID",
@@ -99,7 +101,7 @@ module.exports = {
         return dynamoDB.query(params).promise();
     },
 
-    deleteUserRecipeDB( userID, recipeID ) {
+    deleteUserRecipeDB(userID, recipeID) {
         const params = {
             TableName: recipesTable,
             Key: {
