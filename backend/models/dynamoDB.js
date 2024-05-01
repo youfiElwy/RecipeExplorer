@@ -21,7 +21,7 @@ module.exports = {
         const params = {
             TableName: usersTable,
             Item: {
-                "userID": { S: Math.floor(Math.random() * 1000000000).toString() },
+                "userID": { N: Math.floor(Math.random() * 1000000000).toString() },
                 "userName": { S: userName },
                 "email": { S: email },
                 "salt": { S: salt },
