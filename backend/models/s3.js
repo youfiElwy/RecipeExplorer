@@ -1,12 +1,10 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, getSin, ListObjectsV2Command } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const eks = require('../eks.json');
-
-const bucketName = eks.BUCKET_NAME
-const region = eks.AWS_REGION
-const accessKeyId = eks.AWS_ACCESS_KEY_ID
-const secretAccessKey = eks.AWS_SECRET_ACCESS_KEY
+const bucketName = process.env.BUCKET_NAME
+const region = process.env.AWS_REGION;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 const s3Client = new S3Client({
   region: region,
@@ -22,11 +20,11 @@ module.exports = {
       Bucket: bucketName,
       Key: key
     }
-  
+
     // https://aws.amazon.com/blogs/developer/generate-presigned-url-modular-aws-sdk-javascript/
     const command = new GetObjectCommand(params);
     const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
-  
+
     return url
   },
   async getAllImages() {
@@ -39,7 +37,7 @@ module.exports = {
     const data = await s3Client.send(command);
     const images = data.Contents;
     const signedUrls = images.map(async (image) => {
-      return {key: image.Key, url: await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: bucketName, Key: image.Key }), { expiresIn: 600 })};
+      return { key: image.Key, url: await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: bucketName, Key: image.Key }), { expiresIn: 600 }) };
     });
 
     console.log("signedUrls: ", signedUrls);
