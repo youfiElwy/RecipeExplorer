@@ -98,7 +98,7 @@ const userController =
       //Create jwt token and set expire date to one week
       const today = new Date();
       const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-      const token = jwt.sign({ id: user.Items[0].userID.S, expiresAt: nextWeek }, process.env.JWT, {
+      const token = jwt.sign({ id: user.Items[0].userID.N, expiresAt: nextWeek }, process.env.JWT, {
         algorithm: 'HS512',
       });
 
