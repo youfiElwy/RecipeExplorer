@@ -59,10 +59,13 @@ const userController =
       //hash and salt password
       const hash = await hashPassword(password);
 
-      const result = await createUserDB(userName, email, hash[0], hash[1]).then((data) => data).catch((error) => error);
-
-      if (!result) {
-        return res.status(500).json({ error: 'Internal Server Error!' });
+      let result;
+      try {
+          result = await createUserDB(userName, email, hash[0], hash[1]);
+          // If createUserDB resolves successfully, result will contain the data
+      } catch (error) {
+          // Return the error message
+          return res.status(500).json({ error: 'Internal Server Error!' });
       }
 
       return res.status(200).json({ message: 'Your account has been created please sign in!' });
