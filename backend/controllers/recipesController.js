@@ -1,9 +1,7 @@
-var AWS = require('aws-sdk');
-var eks = require('../eks.json');
 const crypto = require('crypto');
 
 const { createRecipeDB, deleteUserRecipeDB, getAllRecipesDB, getRecipeByIdDB, getRecipesByUserDB } = require('../models/dynamoDB');
-const { getAllImages, getImage, uploadFile, deleteFile } = require('../models/s3');
+const { getAllImages, uploadFile, deleteFile } = require('../models/s3');
 
 const recipeController = {
     createRecipe: async (req, res) => {
