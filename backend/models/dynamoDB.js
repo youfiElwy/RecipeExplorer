@@ -1,13 +1,11 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3")
 const AWS = require('aws-sdk');
 
-const eks = require('../eks.json');
-
-const usersTable = eks.USER_TABLE;
-const recipesTable = eks.RECIPE_TABLE;
-const region = eks.AWS_REGION
-const accessKeyId = eks.AWS_ACCESS_KEY_ID
-const secretAccessKey = eks.AWS_SECRET_ACCESS_KEY
+const usersTable = process.env.USER_TABLE;
+const recipesTable = process.env.RECIPE_TABLE;
+const region = process.env.AWS_REGION;
+const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 const dynamoDB = new AWS.DynamoDB({
     region: region,
