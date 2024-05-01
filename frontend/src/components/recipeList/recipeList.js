@@ -11,6 +11,10 @@ function RecipeList() {
 	useEffect(() => {
 		async function fetchData() {
 			const response = await axios.get('http://localhost:5000/recipe/getall', { withCredentials: true });
+			console.log(response.data.ingredients);
+			for (let i = 0; i < response.data.length; i++) {
+				response.data[i].ingredients = response.data[i].ingredients.split(",");
+			}
 			console.log(response.data);
 			setRecipes(response.data);
 		}

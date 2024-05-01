@@ -29,22 +29,16 @@ module.exports = {
   
     return url
   },
-  async getAllImages() {
-    // getting all images from the bucket then returning an array with the signed urls for each image in the bucket without using the getImage function
+  async getSignedUrl(key) {
     const params = {
-      Bucket: bucketName
+      Bucket: bucketName,
+      Key: key
     }
-
-    const command = new ListObjectsV2Command(params);
-    const data = await s3Client.send(command);
-    const images = data.Contents;
-    const signedUrls = images.map(async (image) => {
-      return {key: image.Key, url: await getSignedUrl(s3Client, new GetObjectCommand({ Bucket: bucketName, Key: image.Key }), { expiresIn: 600 })};
-    });
-
-    console.log("signedUrls: ", signedUrls);
-
-    return Promise.all(signedUrls);
+  
+    const command = new GetObjectCommand(params);
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
+  
+    return url;
   },
   async uploadFile(fileBuffer, fileName, mimetype) {
     const result = await s3Client.send(new PutObjectCommand({

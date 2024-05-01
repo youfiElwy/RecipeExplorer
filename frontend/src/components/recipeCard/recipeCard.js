@@ -35,7 +35,7 @@ function RecipeCard({ recipe }) {
 						) : (
 							// If there are more than 3 ingredients, display the first 3 followed by ". . ."
 							<>
-								{recipe.ingredients.split(",").slice(0, 3).map((ingredient, index) => (
+								{recipe.ingredients.slice(0, 3).map((ingredient, index) => (
 									<div key={index} className="badge badge-outline">
 										{ingredient}
 									</div>

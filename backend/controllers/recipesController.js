@@ -3,7 +3,7 @@ var eks = require('../eks.json');
 const crypto = require('crypto');
 
 const { createRecipeDB, deleteUserRecipeDB, getAllRecipesDB, getRecipeByIdDB, getRecipesByUserDB } = require('../models/dynamoDB');
-const { getAllImages, getImage, uploadFile, deleteFile } = require('../models/s3');
+const { getImage, getSignedUrl , uploadFile, deleteFile } = require('../models/s3');
 
 const recipeController = {
     createRecipe: async (req, res) => {
@@ -44,9 +44,14 @@ const recipeController = {
           return res.status(400).json({ error: 'Couldnt retrieve recipes! ' + error });
         });
         
-        const images = await getAllImages().then((data) => data).catch((error) => { console.log("error: ", error); return error; });
+        const images = await Promise.all(recipes.map(async (recipe) => {
+          const image = await getImage(recipe.image.S).then((data) => data).catch((error) => error);
+          return { key: recipe.image.S, url: image };
+        })).catch((error) => {
+          return res.status(400).json({ error: 'Couldnt retrieve images! ' + error });
+        });
 
-        console.log(images);
+        console.log("images: ", images);
 
         const recipesArray = recipes.map((recipe) => {
           const image = images.find((img) => img.key === recipe.image.S).url;
