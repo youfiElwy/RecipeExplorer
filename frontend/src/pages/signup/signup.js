@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import React, { useState } from 'react';
 
 function SignupPage() {
+	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -19,12 +20,27 @@ function SignupPage() {
 		setPassword(event.target.value);
 	};
 
-	const handleSignup = () => {
+	const handleSignup = async () => {
 		// Add your signup logic here
-		console.log('Signup button clicked');
-		console.log('Username:', username);
-		console.log('Email:', email);
-		console.log('Password:', password);
+		async function singupUser() {
+			const response = await fetch('http://localhost:5000/auth/signUp', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ userName: username, email: email, password: password }),
+			});
+			return response;
+		}
+
+		const signupSuccess = await singupUser();
+
+		if (signupSuccess.status === 200) {
+			navigate('/');
+		}
+		else {
+			alert('Signup failed. Please try again.');
+		}
 	};
 
 	return (

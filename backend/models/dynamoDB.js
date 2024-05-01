@@ -1,6 +1,5 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3")
 const AWS = require('aws-sdk');
-const { updateRecipe } = require("../controllers/recipesController");
 
 const usersTable = process.env.USER_TABLE;
 const recipesTable = process.env.RECIPE_TABLE;
@@ -16,7 +15,6 @@ const dynamoDB = new AWS.DynamoDB({
 
 module.exports = {
     createUserDB: async (userName, email, salt, hashedPassword) => {
-
         const params = {
             TableName: usersTable,
             Item: {
@@ -29,7 +27,6 @@ module.exports = {
         };
         return dynamoDB.putItem(params).promise();
     },
-
     getUserByEmailDB: async (email) => {
         const params = {
             TableName: usersTable,
@@ -43,7 +40,6 @@ module.exports = {
         };
         return dynamoDB.scan(params).promise();
     },
-
     getUserByIdDB: async (userID) => {
         const params = {
             TableName: usersTable,
@@ -53,7 +49,6 @@ module.exports = {
         };
         return dynamoDB.getItem(params).promise();
     },
-
     createRecipeDB: async (userID, userName, title, description, ingredients, category, imageName) => {
         const res = await dynamoDB.putItem({
             TableName: recipesTable,
@@ -71,11 +66,11 @@ module.exports = {
         }).promise();
         return res;
     },
-
     getAllRecipesDB: async () => {
-        const res = await dynamoDB.scan({
+        const res = dynamoDB.scan({
             TableName: recipesTable
         }).promise();
+        console.log(res);
         return res;
     },
 

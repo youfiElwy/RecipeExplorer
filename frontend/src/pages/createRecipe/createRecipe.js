@@ -87,14 +87,22 @@ function CreateRecipePage() {
 		const response = await axios.post('http://localhost:5000/recipe/create', formData, {
 			headers: { 'Content-Type': 'multipart/form-data' },
 		});
-		console.log(response.data);
 
-		// Clear the input fields after adding the recipe
-		setTitle('');
-		setDescription('');
-		setCategory('');
-		setIngredients([]);
-		setAdded(false);
+		if (response.data.error) {
+			alert('Failed to add recipe. Please try again.');
+			console.error(response.data.error);
+			return;
+		}
+		else {
+			// Clear the input fields after adding the recipe
+			setTitle('');
+			setDescription('');
+			setCategory('');
+			setIngredients([]);
+			setAdded(false);
+			alert('Recipe added successfully!');
+		}
+
 	};
 
 	return (

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useNavigate } from 'react';
 import { useParams } from 'react-router-dom';
 import ClickIcon from '../../assets/svg/click';
 import mockData from '../../components/recipeList/mockData';
+import axios from 'axios';
 
 function RecipeDetailsPage() {
 	const navigate = useNavigate();
@@ -24,11 +25,18 @@ function RecipeDetailsPage() {
 		async function fetchData() {// getting recipe by id /get/:id
 			const response = await axios.get('http://localhost:5000/recipe/get/' + id, { withCredentials: true });
 			
+			if (response.data.error) {
+				alert('Failed to fetch recipe. Please try again.');
+				console.error(response.data.error);
+				navigate('/home');
+				return;
+			}
+
 			response.data.ingredients = response.data.ingredients.split(",");
 
 			return response.data;
 		}
-		const fetchedRecipe = mockData.fetchData();
+		const fetchedRecipe = fetchData();
 		
 		if (fetchedRecipe) {
 			setRecipe(fetchedRecipe);
@@ -73,7 +81,7 @@ function RecipeDetailsPage() {
 			setRecipe(updatedRecipe);
 			setIsEditing(false); // Exit editing mode
 		} else {
-			console.log('Failed to update recipe:', updatedRecipe);
+			alert('Failed to update recipe. Please try again.');
 		}
 
 		// Here you would make an API call to save the editedRecipe data

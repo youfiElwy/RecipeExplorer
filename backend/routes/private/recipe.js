@@ -11,8 +11,7 @@ router.get("/getall", recipeController.getAllRecipes);
 router.get("/get/:id", recipeController.getRecipeById);
 router.get("/getuserrecipes", recipeController.getUserRecipes);
 router.post("/update/:id", recipeController.updateRecipe);
-router.post("/delete/:id", recipeController.deleteRecipe);
-
+router.delete("/delete/:id", recipeController.deleteUserRecipe);
 router.post("/create", upload.single('image'),recipeController.createRecipe);
 
 

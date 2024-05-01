@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RecipeCard from '../../components/recipeCard/recipeCard';
 import mockData from '../recipeList/mockData';
+import axios from 'axios';
 
 function MyRecipeList() {
+	const navigate = useNavigate();
 	const [recipes, setRecipes] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState('');
@@ -10,8 +13,9 @@ function MyRecipeList() {
 	useEffect(() => {
 		async function fetchData() {
 			const response = await axios.get('http://localhost:5000/recipe/getuserrecipes', { withCredentials: true });
-			if (response.data.error) {
-				console.log(response.data.error); // handle error
+			if (response.status != 200 && response.data && response.data.error) {
+				alert('Failed to fetch recipes. Please try again.');
+				console.error(response.data.error);
 				return;
 			}
 			for (let i = 0; i < response.data.length; i++) {
@@ -20,7 +24,6 @@ function MyRecipeList() {
 			setRecipes(response.data);
 		}
 		fetchData();
-		setRecipes(mockData);
 	}, []);
 
 	const handleSearch = (query) => {

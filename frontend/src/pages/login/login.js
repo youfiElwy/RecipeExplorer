@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
+import axios from 'axios';
+
 
 function LoginPage() {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -18,31 +21,35 @@ function LoginPage() {
 		// Perform login action here (e.g., call backend API)
 
 		async function loginUser() {
-			const response = await fetch('http://localhost:5000/auth/signIn', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ email: email, password: password }),
+			console.log(email,
+				password);
+			
+			const response = axios.post('http://localhost:5000/auth/signIn', {
+				email: email,
+				password: password,
 			});
-			const data = await response.json();
-			console.log(data);
+			console.log(response);
+			return response.status === 200;
 		}
 
-		console.log('Email:', email);
-		console.log('Password:', password);
+		if (loginUser()) {
+			navigate('/home');
+		}
+		else {
+			alert('Login failed. Please try again.');
+		}
 	};
 
 	return (
 		<>
-			<section class="mb-32">
+			<section className="mb-32">
 				<div
 					className="relative overflow-hidden bg-cover bg-no-repeat bg-[50%] h-[500px]"
 					style={{ backgroundImage: `url(${loginbg})` }}
 				></div>
-				<div class="container mx-auto px-6 md:px-12 xl:px-32">
-					<div class="text-center">
-						<div class="mt-[-170px] block rounded-lg bg-[hsla(0,0%,100%,0.55)] bg-[hsla(0,0%,100%,0.7)] px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-[30px] dark:bg-[hsla(0,0%,5%,0.55)] dark:shadow-black/20 md:py-16 md:px-12">
+				<div className="container mx-auto px-6 md:px-12 xl:px-32">
+					<div className="text-center">
+						<div className="mt-[-170px] block rounded-lg bg-[hsla(0,0%,100%,0.55)] bg-[hsla(0,0%,100%,0.7)] px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-[30px] dark:bg-[hsla(0,0%,5%,0.55)] dark:shadow-black/20 md:py-16 md:px-12">
 							<div className="hero-content flex-col lg:flex-row-reverse">
 								<div className="text-center lg:text-left">
 									<h1 className="text-5xl font-bold text-white">Login now!</h1>

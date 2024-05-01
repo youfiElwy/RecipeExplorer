@@ -36,13 +36,17 @@ const recipeController = {
     },
     getAllRecipes: async (req, res) => { // Get
       try{
+        console.log("Getting all recipes");
         const recipes = await getAllRecipesDB()
         .then((data) => data.Items)
         .catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt retrieve recipes! ' + error });
         });
+        console.log("recipes: ", recipes);
         
         const images = await Promise.all(recipes.map(async (recipe) => {
+          console.log("recipe: ", recipe);
           const image = await getImage(recipe.image.S).then((data) => data).catch((error) => error);
           return { key: recipe.image.S, url: image };
         })).catch((error) => {
@@ -88,9 +92,11 @@ const recipeController = {
       try{
         const id = res.locals.userID;
         if (!id) {
+          console.log('Unauthenticated!');
           return res.status(400).json({ error: 'Unauthenticated!' });
         }
         const recipes = await getRecipesByUserDB(id).catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt retrieve recipes! ' + error });
         });
         return res.status(200).json(recipes);

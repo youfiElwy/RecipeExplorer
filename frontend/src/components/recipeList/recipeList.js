@@ -9,8 +9,14 @@ function RecipeList() {
 	const [selectedCategory, setSelectedCategory] = useState('');
 
 	useEffect(() => {
+		console.log('Fetching data');
 		async function fetchData() {
-			const response = await axios.get('http://localhost:5000/recipe/getall', { withCredentials: true });
+			const response = await axios.get('http://localhost:5000/recipe/getall');
+			if (response.data && response.data.error) {
+				alert('Failed to fetch recipes. Please try again.');
+				console.error(response.data.error);
+				return;
+			}
 			for (let i = 0; i < response.data.length; i++) {
 				response.data[i].ingredients = response.data[i].ingredients.split(",");
 			}

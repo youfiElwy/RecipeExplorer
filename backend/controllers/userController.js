@@ -37,10 +37,12 @@ const userController =
       const { userName, email, password } = req.body;
 
       if (!email) {
+        console.log('Email is required');
         return res.status(400).json({ error: 'Email is required' });
       }
 
       if (!userName) {
+        console.log('User Name is required');
         return res.status(400).json({ error: 'User Name is required' });
       }
 
@@ -48,11 +50,12 @@ const userController =
       const userExists = await getUserByEmailDB(email).then((data) => data).catch((error) => error);
 
       if (userExists.Count > 0) {
+        console.log('Email is already in use');
         return res.status(400).json({ error: 'An error has occured' });
       }
 
-
       if (!password) {
+        console.log('Password is required');
         return res.status(400).json({ error: 'Password is required' });
       }
 
@@ -68,7 +71,7 @@ const userController =
           return res.status(500).json({ error: 'Internal Server Error!' });
       }
 
-      return res.status(200).json({ message: 'Your account has been created please sign in!' });
+      //return res.status(200).json({ message: 'Your account has been created please sign in!' });
     }
     catch (e) {
       return res.status(500).json({ error: 'Internal Server Error!' });
@@ -81,17 +84,21 @@ const userController =
       const { email, password } = req.body;
 
       if (!email) {
+        console.log('Email is required');
         return res.status(400).json({ error: 'Email is required' });
       }
 
       if (!password) {
+        console.log('Password is required');
         return res.status(400).json({ error: 'Password is required' });
       }
 
       //check if email exists and password matches
       const user = await getUserByEmailDB(email).then((data) => data).catch((error) => error);
+      console.log(user);
 
       if (user.Count == 0 || ! await verifyPassword(password, user.Items[0].hashedPassword.S, user.Items[0].salt.S)) {
+        console.log('Email or password is incorrect');
         return res.status(400).json({ error: 'Email or password is incorrect' });
       }
 
