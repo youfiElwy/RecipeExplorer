@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { getUserByIdDB } = require('../models/dynamoDB');
 
 module.exports = async function (req, res, next) {
 	// Check if the cookie exists and has a value
@@ -19,6 +20,11 @@ module.exports = async function (req, res, next) {
 	if (new Date() > new Date(user.expiresAt)) {
 		return res.status(301).redirect('/');
 	}
-	
+
+	const userData = await getUserByIdDB(user.id).then((data) => data).catch((error) => error);
+
+	res.locals.userID=userData.Item.userID.N
+	res.locals.userName=userData.Item.userName.S
+
 	next();
 };
