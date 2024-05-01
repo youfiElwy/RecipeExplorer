@@ -1,12 +1,12 @@
 const crypto = require('crypto');
 
-const { createRecipeDB, deleteUserRecipeDB, getAllRecipesDB, getRecipeByIdDB, getRecipesByUserDB } = require('../models/dynamoDB');
+const { createRecipeDB, deleteUserRecipeDB, getAllRecipesDB, getRecipeByIdDB, getRecipesByUserDB, updateRecipeDB } = require('../models/dynamoDB');
 const { getImage, getSignedUrl , uploadFile, deleteFile } = require('../models/s3');
 
 const recipeController = {
-    createRecipe: async (req, res) => {
+    createRecipe: async (req, res) => { // Create
         try{
-          const { userID, userName } = { userID: 1, userName: "test" };
+          const { userID, userName } = res.locals;
 
           const { title, description, ingredients, category } = req.body;
 
@@ -34,7 +34,7 @@ const recipeController = {
         }
         
     },
-    getAllRecipes: async (req, res) => {
+    getAllRecipes: async (req, res) => { // Get
       try{
         const recipes = await getAllRecipesDB()
         .then((data) => data.Items)
@@ -72,7 +72,7 @@ const recipeController = {
         return res.status(400).json({ error: 'Couldnt retrieve recipes!' });
       }
     },
-    getRecipeById: async (req, res) => {
+    getRecipeById: async (req, res) => { // Get
       try{
         const id = req.params.id;
         const recipe = await getRecipeByIdDB(id).catch((error) => {
@@ -84,9 +84,12 @@ const recipeController = {
         return res.status(400).json({ error: 'Couldnt retrieve recipe!' });
       }
     },
-    getUserRecipes: async (req, res) => {
+    getUserRecipes: async (req, res) => { // Get
       try{
-        const id = req.params.id;
+        const id = res.locals.userID;
+        if (!id) {
+          return res.status(400).json({ error: 'Unauthenticated!' });
+        }
         const recipes = await getRecipesByUserDB(id).catch((error) => {
           return res.status(400).json({ error: 'Couldnt retrieve recipes! ' + error });
         });
@@ -96,12 +99,21 @@ const recipeController = {
         return res.status(400).json({ error: 'Couldnt retrieve recipes!' });
       }
     },
-    deleteUserRecipe: async (req, res) => {
+    deleteUserRecipe: async (req, res) => { // Delete
       try{
         const id = req.params.id;
+
         const recipe = await getRecipeByIdDB(id).catch((error) => {
           return res.status(400).json({ error: 'Couldnt retrieve recipe! ' + error });
         });
+
+        if (recipe.$metadata.httpStatusCode !== 200) {
+          return res.status(400).json({ error: 'Couldnt retrieve recipe!' });
+        }
+
+        if (recipe.Item.userID.N !== res.locals.userID) {
+          return res.status(400).json({ error: 'Unauthorized!' });
+        }
 
         const imageName = recipe.image.S;
 
@@ -121,32 +133,32 @@ const recipeController = {
         return res.status(400).json({ error: 'Couldnt delete recipe!' });
       }
     },
-    updateRecipe: async (req, res) => {
+    updateRecipe: async (req, res) => { // Update
       try{
         const id = req.params.id;
         const recipe = await getRecipeByIdDB(id).catch((error) => {
           return res.status(400).json({ error: 'Couldnt retrieve recipe! ' + error });
         });
 
-        const imageName = recipe.image;
-
-        const result1 = deleteFile(imageName);
-
-        if (result1.$metadata.httpStatusCode !== 200) {
-            return res.status(400).json({ error: 'Internal Server Error!' });
+        if (recipe.$metadata.httpStatusCode !== 200) {
+          return res.status(400).json({ error: 'Couldnt retrieve recipe!' });
         }
+
+        if (recipe.Item.userID.N !== res.locals.userID) {
+          return res.status(400).json({ error: 'Unauthorized!' });
+        }
+
+        const imageName = recipe.image;
 
         const { title, description, ingredients, category } = req.body;
 
-        const newImageName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+        const result = uploadFile(req.file.buffer, imageName, req.file.mimetype);
 
-        const result2 = uploadFile(req.file.buffer, newImageName, req.file.mimetype);
-
-        if (result2.$metadata.httpStatusCode !== 200) {
+        if (result.$metadata.httpStatusCode !== 200) {
             return res.status(400).json({ error: 'Internal Server Error!' });
         }
 
-        await updateRecipeDB(id, title, description, ingredients, category, newImageName).catch((error) => {
+        await updateRecipeDB(id, title, description, ingredients, category, imageName).catch((error) => {
           return res.status(400).json({ error: 'Couldnt update recipe! ' + error });
         });
 

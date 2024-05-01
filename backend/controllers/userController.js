@@ -32,7 +32,7 @@ async function verifyPassword(password, hash, salt) {
 
 const userController =
 {
-  signUp: async (req, res) => {
+  signUp: async (req, res) => { // Create
     try {
       const { userName, email, password } = req.body;
 
@@ -76,7 +76,7 @@ const userController =
 
   },
 
-  signIn: async (req, res) => {
+  signIn: async (req, res) => { // Get
     try {
       const { email, password } = req.body;
 

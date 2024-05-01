@@ -16,6 +16,19 @@ function LoginPage() {
 
 	const handleLogin = () => {
 		// Perform login action here (e.g., call backend API)
+
+		async function loginUser() {
+			const response = await fetch('http://localhost:5000/auth/signIn', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email: email, password: password }),
+			});
+			const data = await response.json();
+			console.log(data);
+		}
+
 		console.log('Email:', email);
 		console.log('Password:', password);
 	};

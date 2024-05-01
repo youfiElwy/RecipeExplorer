@@ -8,8 +8,18 @@ function MyRecipeList() {
 	const [selectedCategory, setSelectedCategory] = useState('');
 
 	useEffect(() => {
-		// Simulate fetching data from the backend (using mockData)
-		// BUT THIS TIME ITS THE RECIPE DATA OF THE CURRENT USER!!!
+		async function fetchData() {
+			const response = await axios.get('http://localhost:5000/recipe/getuserrecipes', { withCredentials: true });
+			if (response.data.error) {
+				console.log(response.data.error); // handle error
+				return;
+			}
+			for (let i = 0; i < response.data.length; i++) {
+				response.data[i].ingredients = response.data[i].ingredients.split(",");
+			}
+			setRecipes(response.data);
+		}
+		fetchData();
 		setRecipes(mockData);
 	}, []);
 

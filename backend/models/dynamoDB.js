@@ -1,5 +1,6 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3")
 const AWS = require('aws-sdk');
+const { updateRecipe } = require("../controllers/recipesController");
 
 const usersTable = process.env.USER_TABLE;
 const recipesTable = process.env.RECIPE_TABLE;
@@ -108,5 +109,23 @@ module.exports = {
             }
         };
         return dynamoDB.deleteItem(params).promise();
+    },
+
+    updateRecipeDB: async (recipeID, title, description, ingredients, category, imageName) => {
+        const params = {
+            TableName: recipesTable,
+            Key: {
+                "recipeID": { N: recipeID.toString() }
+            },
+            UpdateExpression: "set title = :t, description = :d, ingredients = :i, category = :c, image = :img",
+            ExpressionAttributeValues: {
+                ":t": { S: title },
+                ":d": { S: description },
+                ":i": { S: ingredients },
+                ":c": { S: category },
+                ":img": { S: imageName }
+            }
+        };
+        return dynamoDB.updateItem(params).promise();
     }
 }

@@ -4,8 +4,8 @@ import ClickIcon from '../../assets/svg/click';
 import mockData from '../../components/recipeList/mockData';
 
 function RecipeDetailsPage() {
+	const navigate = useNavigate();
 	const { id } = useParams(); // Get recipe ID from URL parameter
-	const [currentUser, setCurrentUser] = useState('123'); // Simulated current user ID
 	const [recipe, setRecipe] = useState(null); // State to store the fetched recipe
 	const [editedRecipe, setEditedRecipe] = useState(null); // State to store the edited recipe data
 	const [isEditing, setIsEditing] = useState(false); // State to manage editing mode
@@ -21,8 +21,15 @@ function RecipeDetailsPage() {
 
 	useEffect(() => {
 		// Simulate fetching recipe from backend based on ID
-		const fetchedRecipe = mockData.find((item) => item.recipeID === parseInt(id));
+		async function fetchData() {// getting recipe by id /get/:id
+			const response = await axios.get('http://localhost:5000/recipe/get/' + id, { withCredentials: true });
+			
+			response.data.ingredients = response.data.ingredients.split(",");
 
+			return response.data;
+		}
+		const fetchedRecipe = mockData.fetchData();
+		
 		if (fetchedRecipe) {
 			setRecipe(fetchedRecipe);
 			setEditedRecipe({ ...fetchedRecipe }); // Initialize editedRecipe with fetched recipe data
@@ -54,13 +61,23 @@ function RecipeDetailsPage() {
 		// Update the edited recipe with the new image
 		const updatedRecipe = { ...editedRecipe, image: updatedImage };
 
+		async function updateRecipe() {// updating recipe by id /update/:id
+			const response = await axios.get('http://localhost:5000/recipe/' + id, { withCredentials: true });
+
+			return response.data;
+		}
+
 		// Simulated API call to save edited recipe data
-		console.log('Saving edited recipe:', updatedRecipe);
-		setRecipe(updatedRecipe);
+		if (updateRecipe()) {
+			console.log('Recipe updated successfully:', updatedRecipe);
+			setRecipe(updatedRecipe);
+			setIsEditing(false); // Exit editing mode
+		} else {
+			console.log('Failed to update recipe:', updatedRecipe);
+		}
 
 		// Here you would make an API call to save the editedRecipe data
 		// Once the API call is successful, you can update the recipe state if needed
-		setIsEditing(false); // Exit editing mode
 	};
 
 	const handleInputChange = (e) => {
@@ -97,7 +114,18 @@ function RecipeDetailsPage() {
 	};
 
 	const handleDeleteRecipeClicked = () => {
-		// Simulate API call to delete recipe
+		async function deleteRecipe() {// deleting recipe by id /delete/:id
+			const response = await axios.get('http://localhost:5000/recipe/delete/' + id, { withCredentials: true });
+
+			return response.data;
+		}
+
+		if (deleteRecipe()) {
+			console.log('Recipe deleted successfully:', recipe.recipeID);
+			// Redirect to the home page or another page after deleting the recipe
+			navigate('/home'); // Redirect to the home page
+		}
+
 		console.log('Deleting recipe with ID:', recipe.recipeID);
 	};
 
