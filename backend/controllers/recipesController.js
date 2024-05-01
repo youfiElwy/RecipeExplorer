@@ -1,5 +1,3 @@
-var AWS = require('aws-sdk');
-var eks = require('../eks.json');
 const crypto = require('crypto');
 
 const { createRecipeDB, deleteUserRecipeDB, getAllRecipesDB, getRecipeByIdDB, getRecipesByUserDB } = require('../models/dynamoDB');
