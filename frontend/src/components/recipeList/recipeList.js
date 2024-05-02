@@ -2,22 +2,26 @@ import React, { useState, useEffect } from 'react';
 import RecipeCard from '../../components/recipeCard/recipeCard';
 import mockData from './mockData';
 import axios from 'axios';
+import RecipeCardSkeleton from '../recipeCardSkeleton/recipeCardSkeleton';
 
 function RecipeList() {
 	const [recipes, setRecipes] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategory, setSelectedCategory] = useState('');
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		console.log('Fetching data');
 		async function fetchData() {
-			const response = await axios.get('http://localhost:5000/recipe/getall', { withCredentials: true });
+			const response = await axios.get('http://localhost:5000/recipe/getall', {
+				withCredentials: true,
+			});
 			if (response.data && response.data.error) {
 				alert('Failed to fetch recipes. Please try again.');
 				console.error(response.data.error);
 				return;
 			}
 			setRecipes(response.data);
+			setIsLoading(false);
 		}
 		fetchData();
 	}, []);
@@ -87,12 +91,42 @@ function RecipeList() {
 					</button>
 				</div>
 			</div>
-			<div className="join flex flex-wrap justify-center gap-10 my-20">
-				{filteredRecipes.length === 0 && <p>No recipes found.</p>}
-				{filteredRecipes.map((recipe) => (
-					<RecipeCard key={recipe.recipeID} recipe={recipe} className="m-2" />
-				))}
-			</div>
+
+			{!isLoading ? (
+				<div className="join flex flex-wrap justify-center gap-10 my-20">
+					{filteredRecipes.length === 0 && (
+						<div className="h-screen">
+							<div role="alert" className="alert alert-warning">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									className="stroke-current shrink-0 h-6 w-6"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+									/>
+								</svg>
+								<span>No recipes found!</span>
+							</div>
+						</div>
+					)}
+					{filteredRecipes.map((recipe) => (
+						<RecipeCard key={recipe.recipeID} recipe={recipe} className="m-2" />
+					))}
+				</div>
+			) : (
+				<div className="join flex flex-wrap justify-center gap-10 my-20">
+					{Array(12)
+						.fill()
+						.map((_, index) => (
+							<RecipeCardSkeleton key={index} />
+						))}
+				</div>
+			)}
 		</div>
 	);
 }

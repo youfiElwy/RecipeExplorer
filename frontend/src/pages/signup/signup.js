@@ -8,6 +8,7 @@ function SignupPage() {
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleUsernameChange = (event) => {
 		setUsername(event.target.value);
@@ -25,15 +26,20 @@ function SignupPage() {
 		e.preventDefault();
 		// Add your signup logic here
 		async function singupUser() {
-			var response = await axios.post('http://localhost:5000/auth/signUp', {
-				userName: username,
-				email: email,
-				password: password,
-			}).then((data) => {
-				navigate('/');
-			}).catch((error) => {
-				alert('Signup failed. Please try again. ' + error.response.data.error);
-			});
+			setPassword(true);
+			var response = await axios
+				.post('http://localhost:5000/auth/signUp', {
+					userName: username,
+					email: email,
+					password: password,
+				})
+				.then((data) => {
+					navigate('/');
+				})
+				.catch((error) => {
+					alert('Signup failed. Please try again. ' + error.response.data.error);
+				});
+			setIsLoading(false);
 		}
 
 		singupUser();
@@ -111,8 +117,10 @@ function SignupPage() {
 											<button
 												className="btn btn-accent text-white"
 												onClick={(e) => handleSignup(e)}
+												disabled={isLoading}
 											>
-												Signup
+												{isLoading ? 'Signing up' : 'Signup'}
+												{isLoading && <span className="loading loading-spinner"></span>}
 											</button>
 										</div>
 										<label className="label">

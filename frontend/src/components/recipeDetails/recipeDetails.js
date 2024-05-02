@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ClickIcon from '../../assets/svg/click';
 import mockData from '../../components/recipeList/mockData';
 import axios from 'axios';
+import RecipeDetailsSkeleton from '../recipeDetailsSkeleton/recipeDetailsSkeleton';
 
 function RecipeDetailsPage() {
 	const navigate = useNavigate();
@@ -11,7 +12,8 @@ function RecipeDetailsPage() {
 	const [editedRecipe, setEditedRecipe] = useState(null); // State to store the edited recipe data
 	const [isEditing, setIsEditing] = useState(false); // State to manage editing mode
 	const [newIngredient, setNewIngredient] = useState(''); // State to store new ingredient
-
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
 
 	// Image upload stuff.
 	const [file, setFile] = useState(null);
@@ -23,24 +25,26 @@ function RecipeDetailsPage() {
 
 	useEffect(() => {
 		// Simulate fetching recipe from backend based on ID
-		async function fetchData() {// getting recipe by id /get/:id
-			const response = await axios.get('http://localhost:5000/recipe/get/' + id, { withCredentials: true });
+		async function fetchData() {
+			// getting recipe by id /get/:id
+			const response = await axios.get('http://localhost:5000/recipe/get/' + id, {
+				withCredentials: true,
+			});
 
 			var userID = decodeURIComponent(document.cookie).split(':')[3];
-			userID = (userID.substring(1, userID.length - 2));
-			setIsCurrentUserRecipeOwner(userID == response.data.userID);
+			userID = userID.substring(1, userID.length - 2);
+			setIsCurrentUserRecipeOwner(userID === response.data.userID);
 
 			if (response.status === 200) {
 				setRecipe(response.data);
 				setEditedRecipe({ ...response.data }); // Initialize editedRecipe with fetched recipe data
-			}
-			else{
+			} else {
 				alert('Recipe not found. Please try again.');
 				navigate('/home');
 			}
 		}
 		fetchData();
-	}, []);
+	}, [isSaving]);
 
 	const handleEditClicked = () => {
 		// Set editing mode to true
@@ -50,6 +54,7 @@ function RecipeDetailsPage() {
 	};
 
 	const handleSaveClicked = () => {
+		setIsSaving(true);
 		// Check if any inputs are empty
 		if (
 			editedRecipe.title.trim() === '' ||
@@ -59,6 +64,7 @@ function RecipeDetailsPage() {
 			editedRecipe.ingredients.some((ingredient) => ingredient.trim() === '')
 		) {
 			alert('Please fill in all fields and ensure the ingredients list is not empty.');
+			setIsSaving(false);
 			return;
 		}
 
@@ -68,20 +74,21 @@ function RecipeDetailsPage() {
 		// Update the edited recipe with the new image
 		const updatedRecipe = { ...editedRecipe };
 
-		async function updateRecipe() {// updating recipe by id /update/:id
+		async function updateRecipe() {
+			// updating recipe by id /update/:id
 			const body = {
 				title: updatedRecipe.title,
 				description: updatedRecipe.description,
 				category: updatedRecipe.category,
 				ingredients: updatedRecipe.ingredients,
-				image: updatedImage
+				image: updatedImage,
 			};
 			const response = await axios.put('http://localhost:5000/recipe/update/' + id, body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
-				withCredentials: true
+				withCredentials: true,
 			});
 
-			console.log(response.status)
+			console.log(response.status);
 
 			if (response.status === 200) {
 				setIsEditing(false); // Exit editing mode
@@ -90,11 +97,11 @@ function RecipeDetailsPage() {
 			} else {
 				alert('Failed to update recipe. Please try again.');
 			}
+			setIsSaving(false);
 		}
 		updateRecipe();
 
 		// Simulated API call to save edited recipe data
-		
 
 		// Here you would make an API call to save the editedRecipe data
 		// Once the API call is successful, you can update the recipe state if needed
@@ -134,14 +141,21 @@ function RecipeDetailsPage() {
 	};
 
 	const handleDeleteRecipeClicked = () => {
-		async function deleteRecipe() {// deleting recipe by id /delete/:id
-			const response = await axios.delete('http://localhost:5000/recipe/delete/' + id, { withCredentials: true });
-
-			if (response.status === 200) {
-				console.log('Recipe deleted successfully:', recipe.recipeID);
-				// Redirect to the home page or another page after deleting the recipe
-				navigate('/home'); // Redirect to the home page
-			}
+		async function deleteRecipe() {
+			setIsDeleting(true);
+			// deleting recipe by id /delete/:id
+			const response = await axios
+				.delete('http://localhost:5000/recipe/delete/' + id, {
+					withCredentials: true,
+				})
+				.then((response) => {
+					if (response.status === 200) {
+						console.log('Recipe deleted successfully:', recipe.recipeID);
+						// Redirect to the home page or another page after deleting the recipe
+						navigate('/home');
+						setIsDeleting(false);
+					}
+				});
 		}
 
 		deleteRecipe();
@@ -158,7 +172,13 @@ function RecipeDetailsPage() {
 	};
 
 	if (!recipe) {
-		return <div>Loading...</div>;
+		return (
+			<>
+				<div className="h-screen flex items-center justify-center">
+					<RecipeDetailsSkeleton />
+				</div>
+			</>
+		);
 	}
 
 	return (
@@ -246,8 +266,12 @@ function RecipeDetailsPage() {
 										<button
 											className="btn btn-xs btn-outline btn-error"
 											onClick={handleDeleteRecipeClicked}
+											disabled={isDeleting || isSaving}
 										>
-											Delete Recipe
+											{isDeleting ? 'Deleting Recipe' : 'Delete Recipe'}
+											{isDeleting && (
+												<span className="loading loading-spinner loading-xs"></span>
+											)}
 										</button>
 									)}
 								</div>
@@ -255,8 +279,9 @@ function RecipeDetailsPage() {
 									<p className="text-xs">{'Created by ' + recipe.userName}</p>
 									{isCurrentUserRecipeOwner && (
 										<button
-											className="btn btn-xs btn-outline btn-primary"
+											className="btn btn-xs btn-outline btn-primary mr-1"
 											onClick={handleEditClicked}
+											disabled={isSaving || isDeleting}
 										>
 											{isEditing ? 'Cancel' : 'Edit Recipe'}
 										</button>
@@ -265,8 +290,12 @@ function RecipeDetailsPage() {
 										<button
 											className="btn btn-xs btn-outline btn-primary"
 											onClick={handleSaveClicked}
+											disabled={isSaving || isDeleting}
 										>
-											Save
+											{isSaving ? 'Saving' : 'Save'}
+											{isSaving && (
+												<span className="loading loading-spinner loading-xs"></span>
+											)}
 										</button>
 									)}
 								</div>
@@ -292,7 +321,6 @@ function RecipeDetailsPage() {
 											<span className="mr-4">Click to view Ingredients</span>
 											<ClickIcon />
 										</div>
-
 
 										<div className="collapse-content">
 											{isEditing && (

@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import axios from 'axios';
 
-
 function LoginPage() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleEmailChange = (event) => {
 		setEmail(event.target.value);
@@ -22,19 +22,30 @@ function LoginPage() {
 		// Perform login action here (e.g., call backend API)
 
 		async function loginUser() {
-			const response = await axios.post('http://localhost:5000/auth/signIn', {
-				email: email,
-				password: password,
-			}, { withCredentials: true });
-			
-			if (response.status === 200) {
-				navigate('/home');
+			setIsLoading(true);
+			try {
+				const response = await axios
+					.post(
+						'http://localhost:5000/auth/signIn',
+						{
+							email: email,
+							password: password,
+						},
+						{ withCredentials: true }
+					)
+					.then((response) => {
+						if (response.status === 200) {
+							navigate('/home');
+						} else {
+							alert('Login failed. Please try again.');
+						}
+					});
+			} catch (err) {
+				alert('Login failed. Please try again.' + err.response.data.error);
 			}
-			else {
-				alert('Login failed. Please try again.');
-			}
+			setIsLoading(false);
 		}
-		loginUser()
+		loginUser();
 	};
 
 	return (
@@ -116,8 +127,10 @@ function LoginPage() {
 											<button
 												className="btn btn-accent text-white"
 												onClick={(e) => handleLogin(e)}
+												disabled={isLoading}
 											>
-												Login
+												{isLoading ? 'Logging' : 'Login'}
+												{isLoading && <span className="loading loading-spinner"></span>}
 											</button>
 										</div>
 										<label className="label">

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -5,20 +6,22 @@ import ProfileIcon from '../../assets/svg/profileIcon';
 
 function Navbar() {
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const logout = (e) => {
 		e.preventDefault();
-		document
-			.cookie
-			.split(";")
-			.forEach((c) => {
-				document.cookie = c
-					.replace(/^ +/, "")
-					.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-			});
+		setIsLoading(true);
+		document.cookie.split(';').forEach((c) => {
+			document.cookie = c
+				.replace(/^ +/, '')
+				.replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+		});
 
-		navigate("/");
-	}
+		setTimeout(() => {
+			navigate('/');
+			setIsLoading(false);
+		}, 2000);
+	};
 
 	return (
 		<>
@@ -85,7 +88,12 @@ function Navbar() {
 							className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 						>
 							<li>
-								<Link onClick={(e)=>logout(e)}>Logout</Link>
+								<Link onClick={(e) => logout(e)}>
+									{isLoading ? 'Logging out' : 'Logout'}
+									{isLoading && (
+										<span className="loading loading-spinner loading-xs"></span>
+									)}
+								</Link>
 							</li>
 						</ul>
 					</div>

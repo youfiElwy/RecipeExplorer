@@ -12,6 +12,7 @@ function CreateRecipePage() {
 	const [description, setDescription] = useState('');
 	const [inputValue, setInputValue] = useState('');
 	const [ingredients, setIngredients] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	// START      STUFF BELONGING TO IMAGE UPLOAD
 	const [file, setFile] = useState(RecipeImage);
@@ -50,9 +51,11 @@ function CreateRecipePage() {
 	};
 
 	const handleAddRecipe = async () => {
+		setIsLoading(true);
 		// Check if title, description, category, and ingredients are not empty
 		if (!title || !description || !category || ingredients.length === 0 || !added) {
 			alert('Please fill in all fields');
+			setIsLoading(false);
 			return;
 		}
 
@@ -68,6 +71,7 @@ function CreateRecipePage() {
 		];
 		if (!validCategories.includes(category)) {
 			alert('Please select a valid category');
+			setIsLoading(false);
 			return;
 		}
 
@@ -85,20 +89,23 @@ function CreateRecipePage() {
 			description: description,
 			category: category,
 			ingredients: ingredients,
-			image: file
+			image: file,
 		};
-		const response = await axios.post('http://localhost:5000/recipe/create', body, {
-			headers: { 'Content-Type': 'multipart/form-data' },
-			withCredentials: true
-		}).then((data) => data).catch((error) => error.response);
+		const response = await axios
+			.post('http://localhost:5000/recipe/create', body, {
+				headers: { 'Content-Type': 'multipart/form-data' },
+				withCredentials: true,
+			})
+			.then((data) => data)
+			.catch((error) => error.response);
 		console.log(response);
 
 		if (response.status !== 200) {
 			alert('Failed to add recipe. Please try again.');
 			console.error(response.data.error);
+			setIsLoading(false);
 			return;
-		}
-		else {
+		} else {
 			// Clear the input fields after adding the recipe
 			setTitle('');
 			setDescription('');
@@ -106,9 +113,9 @@ function CreateRecipePage() {
 			setIngredients([]);
 			setAdded(false);
 			alert('Recipe added successfully!');
-			navigate('/home')
+			navigate('/home');
+			setIsLoading(false);
 		}
-
 	};
 
 	return (
@@ -223,8 +230,13 @@ function CreateRecipePage() {
 									</div>
 								</div>
 
-								<button className="btn btn-wide btn-success" onClick={handleAddRecipe}>
-									Add Recipe
+								<button
+									className="btn btn-wide btn-success"
+									onClick={handleAddRecipe}
+									disabled={isLoading}
+								>
+									{isLoading ? 'Adding Recipe' : 'Add Recipe'}
+									{isLoading && <span className="loading loading-spinner"></span>}
 								</button>
 							</div>
 						</div>
