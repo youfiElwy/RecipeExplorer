@@ -18,9 +18,6 @@ function MyRecipeList() {
 				console.error(response.data.error);
 				return;
 			}
-			for (let i = 0; i < response.data.length; i++) {
-				response.data[i].ingredients = response.data[i].ingredients.split(",");
-			}
 			setRecipes(response.data);
 		}
 		fetchData();

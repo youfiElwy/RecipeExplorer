@@ -11,22 +11,21 @@ const recipeController = {
           const { title, description, ingredients, category } = req.body;
 
           const imageName = crypto.randomBytes(32).toString('hex');
+          console.log(req.body);
+          console.log(req.file.buffer);
 
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
           if (result.$metadata.httpStatusCode !== 200) {
             return res.status(400).json({ error: 'Internal Server Error!' });
           }
+          console.log("Result: ", result);
 
           const newRecipe = await createRecipeDB(userID, userName, title, description, ingredients, category, imageName).then((data) => data)
           .catch((error) => {
-            error.$metadata.httpStatusCode = 200;
             return error;
           });
 
-          if (newRecipe.$metadata.httpStatusCode !== 200) {
-            return res.status(400).json({ error: 'Couldnt create recipe!' });
-          }
-
+          console.log("New recipe: ", newRecipe);
           return res.status(200).json({ message: 'Recipe created!' });
         }
         catch (e){
@@ -63,7 +62,7 @@ const recipeController = {
             userName: recipe.userName.S,
             title: recipe.title.S,
             description: recipe.description.S,
-            ingredients: recipe.ingredients.S,
+            ingredients: recipe.ingredients.L.map((ingredient) => ingredient.S),
             category: recipe.category.S,
             image: image ? image : '',
             upvotes: recipe.upvotes.N
@@ -79,9 +78,35 @@ const recipeController = {
     getRecipeById: async (req, res) => { // Get
       try{
         const id = req.params.id;
-        const recipe = await getRecipeByIdDB(id).catch((error) => {
+
+        console.log("id: ", id);
+
+        if (isNaN(id)) {
+          return res.status(400).json({ error: 'Invalid recipe ID!' });
+        }
+
+        console.log("Getting recipe by id: ", id);
+
+        var recipe = await getRecipeByIdDB(id).catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt retrieve recipe! ' + error });
         });
+        
+        console.log("recipe: ", recipe);
+
+        recipe = {
+            recipeID: recipe.Item.recipeID.N,
+            userID: recipe.Item.userID.N,
+            userName: recipe.Item.userName.S,
+            title: recipe.Item.title.S,
+            description: recipe.Item.description.S,
+            ingredients: recipe.Item.ingredients.L.map((ingredient) => ingredient.S),
+            category: recipe.Item.category.S,
+            image: await getSignedUrl(recipe.Item.image.S),
+            upvotes: recipe.Item.upvotes.N
+          };
+          console.log("recipe: ", recipe);
+
         return res.status(200).json(recipe);
       }
       catch (e){
@@ -90,16 +115,35 @@ const recipeController = {
     },
     getUserRecipes: async (req, res) => { // Get
       try{
-        const id = res.locals.userID;
-        if (!id) {
-          console.log('Unauthenticated!');
-          return res.status(400).json({ error: 'Unauthenticated!' });
-        }
-        const recipes = await getRecipesByUserDB(id).catch((error) => {
-          console.error(error);
+        const userID = res.locals.userID;
+
+        const recipes = await getRecipesByUserDB(userID).then((data) => data.Items).catch((error) => {
           return res.status(400).json({ error: 'Couldnt retrieve recipes! ' + error });
         });
-        return res.status(200).json(recipes);
+
+        const images = await Promise.all(recipes.map(async (recipe) => {
+          const image = await getImage(recipe.image.S).then((data) => data).catch((error) => error);
+          return { key: recipe.image.S, url: image };
+        })).catch((error) => {
+          return res.status(400).json({ error: 'Couldnt retrieve images! ' + error });
+        });
+
+        const recipesArray = recipes.map((recipe) => {
+          const image = images.find((img) => img.key === recipe.image.S).url;
+          return {
+            recipeID: recipe.recipeID.N,
+            userID: recipe.userID.N,
+            userName: recipe.userName.S,
+            title: recipe.title.S,
+            description: recipe.description.S,
+            ingredients: recipe.ingredients.L.map((ingredient) => ingredient.S),
+            category: recipe.category.S,
+            image: image ? image : '',
+            upvotes: recipe.upvotes.N
+          };
+        });
+
+        return res.status(200).json(recipesArray);
       }
       catch (e){
         return res.status(400).json({ error: 'Couldnt retrieve recipes!' });
@@ -108,30 +152,30 @@ const recipeController = {
     deleteUserRecipe: async (req, res) => { // Delete
       try{
         const id = req.params.id;
+        console.log("Deleting recipe with id: ", id);
 
         const recipe = await getRecipeByIdDB(id).catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt retrieve recipe! ' + error });
         });
 
-        if (recipe.$metadata.httpStatusCode !== 200) {
-          return res.status(400).json({ error: 'Couldnt retrieve recipe!' });
-        }
 
         if (recipe.Item.userID.N !== res.locals.userID) {
+          console.error(recipe);
           return res.status(400).json({ error: 'Unauthorized!' });
         }
 
-        const imageName = recipe.image.S;
+        const imageName = recipe.Item.image.S;
 
-        const result = deleteFile(imageName);
-
-        if (result.$metadata.httpStatusCode !== 200) {
-            return res.status(400).json({ error: 'Internal Server Error!' });
-        }
+        console.log("getting result from deleteFile");
+        const result = await deleteFile(imageName);
+        console.log("result:", result);
 
         await deleteUserRecipeDB(id).catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt delete recipe! ' + error });
         });
+        console.log("Deleted recipe with id: ", id);
 
         return res.status(200).json({ message: 'Recipe deleted!' });
       }
@@ -142,31 +186,56 @@ const recipeController = {
     updateRecipe: async (req, res) => { // Update
       try{
         const id = req.params.id;
-        const recipe = await getRecipeByIdDB(id).catch((error) => {
+        var recipe = await getRecipeByIdDB(id).catch((error) => {
+          console.error(error);
           return res.status(400).json({ error: 'Couldnt retrieve recipe! ' + error });
         });
-
-        if (recipe.$metadata.httpStatusCode !== 200) {
-          return res.status(400).json({ error: 'Couldnt retrieve recipe!' });
-        }
-
-        if (recipe.Item.userID.N !== res.locals.userID) {
+        console.log("Updating recipe:",recipe);
+        
+        recipe = {
+          recipeID: recipe.Item.recipeID.N,
+          userID: recipe.Item.userID.N,
+          userName: recipe.Item.userName.S,
+          title: recipe.Item.title.S,
+          description: recipe.Item.description.S,
+          ingredients: recipe.Item.ingredients.L.map((ingredient) => ingredient.S),
+          category: recipe.Item.category.S,
+          image: recipe.Item.image.S,
+          upvotes: recipe.Item.upvotes.N
+        };
+        console.log("Updating recipe:",recipe);
+        
+        if (recipe.userID !== res.locals.userID) {
+          console.error(recipe);
           return res.status(400).json({ error: 'Unauthorized!' });
         }
-
+        
         const imageName = recipe.image;
+        console.log("Image name: ", imageName);
 
         const { title, description, ingredients, category } = req.body;
 
-        const result = uploadFile(req.file.buffer, imageName, req.file.mimetype);
+        console.log("Title: ", title);
+        console.log("Description: ", description);
+        console.log("Ingredients: ", ingredients);
+        console.log("Category: ", category);
+        console.log("Image: ", req.file);
 
-        if (result.$metadata.httpStatusCode !== 200) {
+        if (req.file !== undefined) {
+          const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
+
+          console.log("Result: ", result);
+
+          if (result.$metadata.httpStatusCode !== 200) {
             return res.status(400).json({ error: 'Internal Server Error!' });
+          }
         }
 
+        console.log("Updating recipe:",recipe);
         await updateRecipeDB(id, title, description, ingredients, category, imageName).catch((error) => {
           return res.status(400).json({ error: 'Couldnt update recipe! ' + error });
         });
+        console.log("Updated recipe:",recipe);
 
         return res.status(200).json({ message: 'Recipe updated!' });
       }

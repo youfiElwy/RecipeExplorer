@@ -1,8 +1,25 @@
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ProfileIcon from '../../assets/svg/profileIcon';
 
 function Navbar() {
+	const navigate = useNavigate();
+
+	const logout = (e) => {
+		e.preventDefault();
+		document
+			.cookie
+			.split(";")
+			.forEach((c) => {
+				document.cookie = c
+					.replace(/^ +/, "")
+					.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+			});
+
+		navigate("/");
+	}
+
 	return (
 		<>
 			<div className="navbar bg-accent">
@@ -68,7 +85,7 @@ function Navbar() {
 							className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 						>
 							<li>
-								<Link to="/">Logout</Link>
+								<Link onClick={(e)=>logout(e)}>Logout</Link>
 							</li>
 						</ul>
 					</div>

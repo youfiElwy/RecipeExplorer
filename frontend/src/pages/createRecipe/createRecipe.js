@@ -3,8 +3,10 @@ import Navbar from '../../components/navbar/navbar';
 import Footer from '../../components/footer/footer';
 import RecipeImage from '../../assets/images/recipeImage.jpg';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function CreateRecipePage() {
+	const navigate = useNavigate();
 	const [title, setTitle] = useState('');
 	const [category, setCategory] = useState('');
 	const [description, setDescription] = useState('');
@@ -78,17 +80,20 @@ function CreateRecipePage() {
 			ingredients,
 		});
 
-		const formData = new FormData();
-		formData.append('image', file);
-		formData.append('title', title);
-		formData.append('description', description);
-		formData.append('ingredients', ingredients);
-		formData.append('category', category);
-		const response = await axios.post('http://localhost:5000/recipe/create', formData, {
+		const body = {
+			title: title,
+			description: description,
+			category: category,
+			ingredients: ingredients,
+			image: file
+		};
+		const response = await axios.post('http://localhost:5000/recipe/create', body, {
 			headers: { 'Content-Type': 'multipart/form-data' },
-		});
+			withCredentials: true
+		}).then((data) => data).catch((error) => error.response);
+		console.log(response);
 
-		if (response.data.error) {
+		if (response.status !== 200) {
 			alert('Failed to add recipe. Please try again.');
 			console.error(response.data.error);
 			return;
@@ -101,6 +106,7 @@ function CreateRecipePage() {
 			setIngredients([]);
 			setAdded(false);
 			alert('Recipe added successfully!');
+			navigate('/home')
 		}
 
 	};

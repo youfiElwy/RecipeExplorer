@@ -51,7 +51,7 @@ const userController =
 
       if (userExists.Count > 0) {
         console.log('Email is already in use');
-        return res.status(400).json({ error: 'An error has occured' });
+        return res.status(400).json({ error: 'Email already in use' });
       }
 
       if (!password) {
@@ -71,7 +71,7 @@ const userController =
           return res.status(500).json({ error: 'Internal Server Error!' });
       }
 
-      //return res.status(200).json({ message: 'Your account has been created please sign in!' });
+      return res.status(200).json({ message: 'Your account has been created please sign in!' });
     }
     catch (e) {
       return res.status(500).json({ error: 'Internal Server Error!' });
@@ -108,8 +108,8 @@ const userController =
       const token = jwt.sign({ id: user.Items[0].userID.N, expiresAt: nextWeek }, process.env.JWT, {
         algorithm: 'HS512',
       });
-
-      return res.cookie('jwt', token).status(200).json({ message: 'You are logged in' });
+      console.log(token);
+      return res.cookie('jwt', {token, id: user.Items[0].userID.N}).status(200).json({ message: 'You are logged in' });
     }
     catch (e) {
       return res.status(500).json({ error: 'Internal Server Error!' });

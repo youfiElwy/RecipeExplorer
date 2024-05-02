@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import React, { useState } from 'react';
+import axios, { AxiosError, isAxiosError } from 'axios';
 
 function SignupPage() {
 	const navigate = useNavigate();
@@ -20,27 +21,22 @@ function SignupPage() {
 		setPassword(event.target.value);
 	};
 
-	const handleSignup = async () => {
+	const handleSignup = (e) => {
+		e.preventDefault();
 		// Add your signup logic here
 		async function singupUser() {
-			const response = await fetch('http://localhost:5000/auth/signUp', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ userName: username, email: email, password: password }),
+			var response = await axios.post('http://localhost:5000/auth/signUp', {
+				userName: username,
+				email: email,
+				password: password,
+			}).then((data) => {
+				navigate('/');
+			}).catch((error) => {
+				alert('Signup failed. Please try again. ' + error.response.data.error);
 			});
-			return response;
 		}
 
-		const signupSuccess = await singupUser();
-
-		if (signupSuccess.status === 200) {
-			navigate('/');
-		}
-		else {
-			alert('Signup failed. Please try again.');
-		}
+		singupUser();
 	};
 
 	return (
@@ -114,7 +110,7 @@ function SignupPage() {
 										<div className="form-control mt-6">
 											<button
 												className="btn btn-accent text-white"
-												onClick={handleSignup}
+												onClick={(e) => handleSignup(e)}
 											>
 												Signup
 											</button>

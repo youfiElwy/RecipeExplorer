@@ -17,27 +17,24 @@ function LoginPage() {
 		setPassword(event.target.value);
 	};
 
-	const handleLogin = () => {
+	const handleLogin = (e) => {
+		e.preventDefault();
 		// Perform login action here (e.g., call backend API)
 
 		async function loginUser() {
-			console.log(email,
-				password);
-			
-			const response = axios.post('http://localhost:5000/auth/signIn', {
+			const response = await axios.post('http://localhost:5000/auth/signIn', {
 				email: email,
 				password: password,
-			});
-			console.log(response);
-			return response.status === 200;
+			}, { withCredentials: true });
+			
+			if (response.status === 200) {
+				navigate('/home');
+			}
+			else {
+				alert('Login failed. Please try again.');
+			}
 		}
-
-		if (loginUser()) {
-			navigate('/home');
-		}
-		else {
-			alert('Login failed. Please try again.');
-		}
+		loginUser()
 	};
 
 	return (
@@ -118,7 +115,7 @@ function LoginPage() {
 										<div className="form-control mt-6">
 											<button
 												className="btn btn-accent text-white"
-												onClick={handleLogin}
+												onClick={(e) => handleLogin(e)}
 											>
 												Login
 											</button>

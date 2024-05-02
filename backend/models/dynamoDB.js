@@ -58,7 +58,7 @@ module.exports = {
                 "userName": { S: userName },
                 "title": { S: title },
                 "description": { S: description },
-                "ingredients": { S: ingredients },
+                "ingredients": { L: ingredients.map((ingredient) => ({ S: ingredient }))},
                 "category": { S: category },
                 "image": { S: imageName },
                 "upvotes": { N: "0" },
@@ -74,7 +74,7 @@ module.exports = {
         return res;
     },
 
-    getRecipeByIdDB(recipeID) {
+    getRecipeByIdDB: async (recipeID) => {
         const params = {
             TableName: recipesTable,
             Key: {
@@ -87,19 +87,21 @@ module.exports = {
     getRecipesByUserDB(userID) {
         const params = {
             TableName: recipesTable,
-            KeyConditionExpression: "userID = :userID",
+            FilterExpression: "#userID = :userIDValue",
+            ExpressionAttributeNames: {
+                "#userID": "userID"
+            },
             ExpressionAttributeValues: {
-                ":userID": { N: userID.toString() }
+                ":userIDValue": { N: userID.toString() }
             }
         };
-        return dynamoDB.query(params).promise();
+        return dynamoDB.scan(params).promise();
     },
 
-    deleteUserRecipeDB(userID, recipeID) {
+    deleteUserRecipeDB: async (recipeID) => {
         const params = {
             TableName: recipesTable,
             Key: {
-                "userID": { N: userID.toString() },
                 "recipeID": { N: recipeID.toString() }
             }
         };
@@ -116,7 +118,7 @@ module.exports = {
             ExpressionAttributeValues: {
                 ":t": { S: title },
                 ":d": { S: description },
-                ":i": { S: ingredients },
+                ":i": { L: ingredients.map((ingredient) => ({ S: ingredient })) },
                 ":c": { S: category },
                 ":img": { S: imageName }
             }

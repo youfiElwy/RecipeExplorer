@@ -10,7 +10,8 @@ import CreateRecipePage from './pages/createRecipe/createRecipe';
 
 function App() {
 	return (
-		<>
+		<>	
+			{ document.cookie ?
 			<Routes>
 				<Route path="/" element={<LoginPage />} />
 				<Route path="/signup" element={<SignupPage />} />
@@ -19,6 +20,16 @@ function App() {
 				<Route path="/recipe/:id" element={<RecipeDetailsPage />} />
 				<Route path="/newrecipe" element={<CreateRecipePage />} />
 			</Routes>
+			:
+			<Routes>
+				<Route path="/" element={<LoginPage />} />
+				<Route path="/signup" element={<SignupPage />} />
+				<Route path="/home" element={<LoginPage />} />
+				<Route path="/myrecipes" element={<LoginPage />} />
+				<Route path="/recipe/:id" element={<LoginPage />} />
+				<Route path="/newrecipe" element={<LoginPage />} />
+			</Routes>
+			}
 		</>
 	);
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect, useNavigate } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ClickIcon from '../../assets/svg/click';
 import mockData from '../../components/recipeList/mockData';
 import axios from 'axios';
@@ -12,40 +12,39 @@ function RecipeDetailsPage() {
 	const [isEditing, setIsEditing] = useState(false); // State to manage editing mode
 	const [newIngredient, setNewIngredient] = useState(''); // State to store new ingredient
 
+
 	// Image upload stuff.
-	const [addImage, setAddImage] = useState({ myFile: '' }); // State to store the uploaded image
+	const [file, setFile] = useState(null);
 	const [added, setAdded] = useState(false); // State to track if an image is added
 
 	// Check if the current user is the creator of the recipe
 	// const isCurrentUserRecipeOwner = currentUser === recipe.userID;
-	const isCurrentUserRecipeOwner = true;
+	const [isCurrentUserRecipeOwner, setIsCurrentUserRecipeOwner] = useState(false);
 
 	useEffect(() => {
 		// Simulate fetching recipe from backend based on ID
 		async function fetchData() {// getting recipe by id /get/:id
 			const response = await axios.get('http://localhost:5000/recipe/get/' + id, { withCredentials: true });
-			
-			if (response.data.error) {
-				alert('Failed to fetch recipe. Please try again.');
-				console.error(response.data.error);
-				navigate('/home');
-				return;
+
+			var userID = decodeURIComponent(document.cookie).split(':')[3];
+			userID = (userID.substring(1, userID.length - 2));
+			setIsCurrentUserRecipeOwner(userID == response.data.userID);
+
+			if (response.status === 200) {
+				setRecipe(response.data);
+				setEditedRecipe({ ...response.data }); // Initialize editedRecipe with fetched recipe data
 			}
-
-			response.data.ingredients = response.data.ingredients.split(",");
-
-			return response.data;
+			else{
+				alert('Recipe not found. Please try again.');
+				navigate('/home');
+			}
 		}
-		const fetchedRecipe = fetchData();
-		
-		if (fetchedRecipe) {
-			setRecipe(fetchedRecipe);
-			setEditedRecipe({ ...fetchedRecipe }); // Initialize editedRecipe with fetched recipe data
-		}
-	}, [id]);
+		fetchData();
+	}, []);
 
 	const handleEditClicked = () => {
 		// Set editing mode to true
+		setAdded(false); // Reset added state when editing
 		setEditedRecipe({ ...recipe }); // Reset editedRecipe to the original recipe data
 		setIsEditing(!isEditing);
 	};
@@ -64,25 +63,38 @@ function RecipeDetailsPage() {
 		}
 
 		// Check if a new image has been added
-		const updatedImage = added ? addImage.myFile : recipe.image;
+		const updatedImage = added ? file : recipe.image;
 
 		// Update the edited recipe with the new image
-		const updatedRecipe = { ...editedRecipe, image: updatedImage };
+		const updatedRecipe = { ...editedRecipe };
 
 		async function updateRecipe() {// updating recipe by id /update/:id
-			const response = await axios.get('http://localhost:5000/recipe/' + id, { withCredentials: true });
+			const body = {
+				title: updatedRecipe.title,
+				description: updatedRecipe.description,
+				category: updatedRecipe.category,
+				ingredients: updatedRecipe.ingredients,
+				image: updatedImage
+			};
+			const response = await axios.put('http://localhost:5000/recipe/update/' + id, body, {
+				headers: { 'Content-Type': 'multipart/form-data' },
+				withCredentials: true
+			});
 
-			return response.data;
+			console.log(response.status)
+
+			if (response.status === 200) {
+				setIsEditing(false); // Exit editing mode
+				console.log('Recipe updated successfully:', updatedRecipe);
+				setRecipe(updatedRecipe);
+			} else {
+				alert('Failed to update recipe. Please try again.');
+			}
 		}
+		updateRecipe();
 
 		// Simulated API call to save edited recipe data
-		if (updateRecipe()) {
-			console.log('Recipe updated successfully:', updatedRecipe);
-			setRecipe(updatedRecipe);
-			setIsEditing(false); // Exit editing mode
-		} else {
-			alert('Failed to update recipe. Please try again.');
-		}
+		
 
 		// Here you would make an API call to save the editedRecipe data
 		// Once the API call is successful, you can update the recipe state if needed
@@ -123,42 +135,25 @@ function RecipeDetailsPage() {
 
 	const handleDeleteRecipeClicked = () => {
 		async function deleteRecipe() {// deleting recipe by id /delete/:id
-			const response = await axios.get('http://localhost:5000/recipe/delete/' + id, { withCredentials: true });
+			const response = await axios.delete('http://localhost:5000/recipe/delete/' + id, { withCredentials: true });
 
-			return response.data;
+			if (response.status === 200) {
+				console.log('Recipe deleted successfully:', recipe.recipeID);
+				// Redirect to the home page or another page after deleting the recipe
+				navigate('/home'); // Redirect to the home page
+			}
 		}
 
-		if (deleteRecipe()) {
-			console.log('Recipe deleted successfully:', recipe.recipeID);
-			// Redirect to the home page or another page after deleting the recipe
-			navigate('/home'); // Redirect to the home page
-		}
-
-		console.log('Deleting recipe with ID:', recipe.recipeID);
-	};
-
-	const convertToBase64 = (file) => {
-		return new Promise((resolve, reject) => {
-			const fileReader = new FileReader();
-			fileReader.readAsDataURL(file);
-			fileReader.onload = () => {
-				resolve(fileReader.result);
-			};
-			fileReader.onerror = (error) => {
-				reject(error);
-			};
-		});
+		deleteRecipe();
 	};
 
 	const handleProfilePicUpload = async (e) => {
 		const file = e.target.files[0];
 		if (!file) {
-			setAddImage({ myFile: '' });
 			setAdded(false);
 			return;
 		}
-		const base64 = await convertToBase64(file);
-		setAddImage({ ...addImage, myFile: base64 });
+		setFile(file);
 		setAdded(true);
 	};
 
@@ -171,7 +166,6 @@ function RecipeDetailsPage() {
 			<div className="h-full">
 				<div className="hero min-h-screen">
 					<div className="hero-content flex-col lg:flex-row-reverse">
-						{/* Updated image upload */}
 						{!isEditing ? (
 							<div className="w-96 h-96 overflow-hidden rounded-3xl shadow-2xl">
 								<img
@@ -195,7 +189,7 @@ function RecipeDetailsPage() {
 										<div className="w-96 h-96 overflow-hidden rounded-3xl shadow-2xl">
 											<img
 												className="w-full h-full object-cover"
-												src={addImage.myFile}
+												src={URL.createObjectURL(file)}
 												alt=""
 											/>
 										</div>
@@ -212,7 +206,6 @@ function RecipeDetailsPage() {
 								/>
 							</div>
 						)}
-						{/* End of updated image upload */}
 
 						<div>
 							<div className="card-body">
@@ -249,7 +242,6 @@ function RecipeDetailsPage() {
 									) : (
 										<div className="badge badge-accent">{recipe.category}</div>
 									)}
-									{/* Render delete button only for recipe owner */}
 									{isCurrentUserRecipeOwner && (
 										<button
 											className="btn btn-xs btn-outline btn-error"
@@ -261,7 +253,6 @@ function RecipeDetailsPage() {
 								</div>
 								<div className="flex justify-between items-center">
 									<p className="text-xs">{'Created by ' + recipe.userName}</p>
-									{/* Render edit button only for recipe owner */}
 									{isCurrentUserRecipeOwner && (
 										<button
 											className="btn btn-xs btn-outline btn-primary"
@@ -302,7 +293,6 @@ function RecipeDetailsPage() {
 											<ClickIcon />
 										</div>
 
-										{/* Text box and add button for adding new ingredients */}
 
 										<div className="collapse-content">
 											{isEditing && (
