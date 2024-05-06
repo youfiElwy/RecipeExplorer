@@ -26,7 +26,7 @@ function LoginPage() {
 			try {
 				const response = await axios
 					.post(
-						process.env.BACKEND_URL + '/auth/signIn',
+						'http://3.85.237.180:5000/auth/signIn',
 						{
 							email: email,
 							password: password,
@@ -41,7 +41,8 @@ function LoginPage() {
 						}
 					});
 			} catch (err) {
-				alert('Login failed. Please try again.' + err.response.data.error);
+				// alert('Login failed. Please try again.' + err.response.data.error);
+				alert('http://3.85.237.180:5000/auth/signIn');
 			}
 			setIsLoading(false);
 		}

@@ -27,7 +27,7 @@ function RecipeDetailsPage() {
 		// Simulate fetching recipe from backend based on ID
 		async function fetchData() {
 			// getting recipe by id /get/:id
-			const response = await axios.get(process.env.BACKEND_URL + '/recipe/get/' + id, {
+			const response = await axios.get('http://3.85.237.180:5000/recipe/get/' + id, {
 				withCredentials: true,
 			});
 
@@ -83,7 +83,7 @@ function RecipeDetailsPage() {
 				ingredients: updatedRecipe.ingredients,
 				image: updatedImage,
 			};
-			const response = await axios.put(process.env.BACKEND_URL + '/recipe/update/' + id, body, {
+			const response = await axios.put('http://3.85.237.180:5000/recipe/update/' + id, body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				withCredentials: true,
 			});
@@ -145,7 +145,7 @@ function RecipeDetailsPage() {
 			setIsDeleting(true);
 			// deleting recipe by id /delete/:id
 			const response = await axios
-				.delete(process.env.BACKEND_URL + '/recipe/delete/' + id, {
+				.delete('http://3.85.237.180:5000/recipe/delete/' + id, {
 					withCredentials: true,
 				})
 				.then((response) => {

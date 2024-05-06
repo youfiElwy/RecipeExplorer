@@ -12,7 +12,7 @@ function RecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get(process.env.BACKEND_URL + '/recipe/getall', {
+			const response = await axios.get('http://3.85.237.180:5000/recipe/getall', {
 				withCredentials: true,
 			});
 			if (response.data && response.data.error) {
