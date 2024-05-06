@@ -14,7 +14,7 @@ function MyRecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get('http://localhost:5000/recipe/getuserrecipes', {
+			const response = await axios.get(process.env.BACKEND_URL + '/recipe/getuserrecipes', {
 				withCredentials: true,
 			});
 			if (response.status != 200 && response.data && response.data.error) {

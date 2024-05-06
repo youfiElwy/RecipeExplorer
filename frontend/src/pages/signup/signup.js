@@ -28,7 +28,7 @@ function SignupPage() {
 		async function singupUser() {
 			setPassword(true);
 			var response = await axios
-				.post('http://localhost:5000/auth/signUp', {
+				.post(process.env.BACKEND_URL + '/auth/signUp', {
 					userName: username,
 					email: email,
 					password: password,

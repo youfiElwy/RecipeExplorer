@@ -92,7 +92,7 @@ function CreateRecipePage() {
 			image: file,
 		};
 		const response = await axios
-			.post('http://localhost:5000/recipe/create', body, {
+			.post(process.env.BACKEND_URL + '/recipe/create', body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				withCredentials: true,
 			})

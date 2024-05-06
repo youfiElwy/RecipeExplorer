@@ -26,7 +26,7 @@ function LoginPage() {
 			try {
 				const response = await axios
 					.post(
-						'http://localhost:5000/auth/signIn',
+						process.env.BACKEND_URL + '/auth/signIn',
 						{
 							email: email,
 							password: password,
