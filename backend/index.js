@@ -6,6 +6,10 @@ const PORT = 5000;
 require('dotenv').config();
 const authenticationMiddleware = require('./middleware/authenticationMiddleware');
 
+app.get('/health', (req, res) => {
+	res.send('Server is working');
+});
+
 app.use((req, res, next) => {
 	console.log('Time:', Date.now());
 	console.log('Request Type:', req.method);
