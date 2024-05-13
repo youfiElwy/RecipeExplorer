@@ -4,7 +4,7 @@ import Footer from '../../components/footer/footer';
 import RecipeImage from '../../assets/images/recipeImage.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import  ip  from '../../not_dot_env';
 function CreateRecipePage() {
 	const navigate = useNavigate();
 	const [title, setTitle] = useState('');
@@ -92,7 +92,7 @@ function CreateRecipePage() {
 			image: file,
 		};
 		const response = await axios
-			.post('http://3.85.237.180:5000/recipe/create', body, {
+			.post(`${ip}/recipe/create`, body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				withCredentials: true,
 			})

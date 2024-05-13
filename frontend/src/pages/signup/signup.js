@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import React, { useState } from 'react';
 import axios, { AxiosError, isAxiosError } from 'axios';
-
+import ip from '../../not_dot_env';
 function SignupPage() {
 	const navigate = useNavigate();
 	const [username, setUsername] = useState('');
@@ -28,7 +28,7 @@ function SignupPage() {
 		async function singupUser() {
 			setPassword(true);
 			var response = await axios
-				.post('http://3.85.237.180:5000/auth/signUp', {
+				.post(`${ip}auth/signUp`, {
 					userName: username,
 					email: email,
 					password: password,

@@ -3,7 +3,7 @@ import RecipeCard from '../../components/recipeCard/recipeCard';
 import mockData from './mockData';
 import axios from 'axios';
 import RecipeCardSkeleton from '../recipeCardSkeleton/recipeCardSkeleton';
-
+import ip from '../../not_dot_env';
 function RecipeList() {
 	const [recipes, setRecipes] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
@@ -12,7 +12,7 @@ function RecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get('http://3.85.237.180:5000/recipe/getall', {
+			const response = await axios.get(`${ip}/recipe/getall`, {
 				withCredentials: true,
 			});
 			if (response.data && response.data.error) {
