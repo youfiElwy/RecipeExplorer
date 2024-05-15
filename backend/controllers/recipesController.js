@@ -12,7 +12,7 @@ const recipeController = {
 
           const imageName = crypto.randomBytes(32).toString('hex');
           console.log(req.body);
-          console.log(req.file.buffer);
+          console.log(req.file.mimetype);
 
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
           if (result.$metadata.httpStatusCode !== 200) {

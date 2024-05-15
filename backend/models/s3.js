@@ -43,7 +43,7 @@ module.exports = {
       Bucket: bucketName,
       Body: fileBuffer,
       Key: fileName,
-      ContentType: mimetype
+      ContentType: mimetype,
     }));
     return result;
   },

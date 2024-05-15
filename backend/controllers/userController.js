@@ -81,6 +81,7 @@ const userController = {
 
 	signIn: async (req, res) => {
 		// Get
+		console.log('Sign In Controller');
 		try {
 			const { email, password } = req.body;
 
