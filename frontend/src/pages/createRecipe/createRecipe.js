@@ -92,7 +92,7 @@ function CreateRecipePage() {
 			image: file,
 		};
 		const response = await axios
-			.post('http://3.237.94.101:5000/recipe/create', body, {
+			.post('http://52.91.223.162:5000/recipe/create', body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				withCredentials: true,
 			})

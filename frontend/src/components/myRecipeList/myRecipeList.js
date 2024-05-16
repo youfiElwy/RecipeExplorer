@@ -14,7 +14,7 @@ function MyRecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get('http://3.237.94.101:5000/recipe/getuserrecipes', {
+			const response = await axios.get('http://52.91.223.162:5000/recipe/getuserrecipes', {
 				withCredentials: true,
 			});
 			if (response.status != 200 && response.data && response.data.error) {
