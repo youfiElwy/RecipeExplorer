@@ -5,13 +5,14 @@ const { getImage, getSignedUrl , uploadFile, deleteFile } = require('../models/s
 
 const recipeController = {
     createRecipe: async (req, res) => { // Create
+      console.log("Recipe controller");
         try{
           const { userID, userName } = res.locals;
 
           const { title, description, ingredients, category } = req.body;
 
-          const imageName = crypto.randomBytes(32).toString('hex');
-          console.log(req.body);
+          const imageName = crypto.randomBytes(32).toString('hex') + '.' + req.file.mimetype.split('/')[1];
+          // req.file.mimetype = req.file.mimetype.split('/')[1];
           console.log(req.file.mimetype);
 
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
@@ -222,6 +223,8 @@ const recipeController = {
         console.log("Image: ", req.file);
 
         if (req.file !== undefined) {
+          const deleteResult = await deleteFile(imageName).then((data) => data).catch((error) => error);
+          imageName = imageName.split('.')[0] + '.' + req.file.mimetype.split('/')[1];
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
 
           console.log("Result: ", result);

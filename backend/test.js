@@ -1,18 +1,18 @@
 var AWS = require('aws-sdk');
-var eks = require('./eks.json');
+require('dotenv').config();
 
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 
-const region = eks.AWS_REGION;
-const accessKeyId = eks.AWS_ACCESS_KEY_ID;
-const secretAccessKey = eks.AWS_SECRET_ACCESS_KEY;
-const tableName = eks.USER_TABLE;
+const region = "";
+const accessKeyId = "";
+const secretAccessKey = "";
+const tableName = process.env.USER_TABLE;
 
-const dynamoDB = new AWS.DynamoDB({
-  region: region,
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
-});
+// const dynamoDB = new AWS.DynamoDB({
+//   region: region,
+//   accessKeyId: accessKeyId,
+//   secretAccessKey: secretAccessKey,
+// });
 
 // async function f(){
 //     const existingUser = await dynamoDB.scan ({
@@ -58,6 +58,8 @@ const dynamoDB = new AWS.DynamoDB({
 //   }
 // });
 
+console.log("region: ", region);
+
 const s3Client = new S3Client({
     region: region,
     credentials: {
@@ -65,21 +67,14 @@ const s3Client = new S3Client({
         secretAccessKey: secretAccessKey,
     }
 });
-
-console.log("x: ", x);
-
-const params2 = {
-    Bucket: "my-bucket",
-    Key: "my-key",
-    Body: "Hello World!",
-    ContentType: "text/plain"
-};
-
-const command = new PutObjectCommand(params2);
-
-s3Client.send(command).then((data) => {
-    console.log(data);
+console.log("s3Client");
+async function f() {
+    const { Body, ContentType } = await s3Client.send(new GetObjectCommand({
+        Bucket: "",
+        Key: "",
+    }));
+    console.log("Body: ", Body);
+    console.log("ContentType: ", ContentType);
 }
-).catch((error) => {
-    console.error(error);
-});
+
+f();
