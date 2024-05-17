@@ -29,7 +29,7 @@ app.use(
 );
 
 app.get('/health', (req, res) => {
-	res.send('Server is working');
+	res.status(200).send('Server is working');
 });
 
 app.use('/auth', require('./routes/public/auth'));
