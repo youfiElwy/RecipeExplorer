@@ -15,6 +15,10 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.get('/', (req, res) => {
+	res.status(200).send('Server is working');
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -27,10 +31,6 @@ app.use(
 		credentials: true,
 	})
 );
-
-app.get('/health', (req, res) => {
-	res.status(200).send('Server is working');
-});
 
 app.use('/auth', require('./routes/public/auth'));
 
