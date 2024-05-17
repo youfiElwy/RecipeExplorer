@@ -4,22 +4,22 @@ const { getUserByIdDB } = require('../models/dynamoDB');
 module.exports = async function (req, res, next) {
 	try {
 		// Check if the cookie exists and has a value
-		const cookieValue = req.headers.cookie && req.headers.cookie.substring(4);
+		console.log("Middleware");
+		const cookieValue = req.body.token;
 		console.log(cookieValue);
 		if (!cookieValue) {
 			console.log("no cookie")
 			return res.status(301);
 		}
-
-		console.log(decodeURIComponent(cookieValue));
-
-		var cookie = decodeURIComponent(cookieValue).split(':')[2];
-		cookie = (cookie.substring(1, cookie.length - 6));
+		console.log("cookie exists")
+		
 
 		// Verify the JWT token from the cookie
 		let user = null;
 		try {
-			user = jwt.verify(cookie, process.env.JWT);
+			console.log("try")
+			user = jwt.verify(cookieValue, process.env.JWT);
+			console.log(user)
 		} catch (err) {
 			console.log("error")
 			return res.status(301);

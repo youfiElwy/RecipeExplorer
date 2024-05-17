@@ -223,8 +223,10 @@ const recipeController = {
         console.log("Image: ", req.file);
 
         if (req.file !== undefined) {
+          console.log("Deleting file: ", imageName);
           const deleteResult = await deleteFile(imageName).then((data) => data).catch((error) => error);
-          imageName = imageName.split('.')[0] + '.' + req.file.mimetype.split('/')[1];
+          console.log("DeleteD result: ", imageName);
+          // imageName = imageName.split('.')[0] + '.' + req.file.mimetype.split('/')[1];
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
 
           console.log("Result: ", result);

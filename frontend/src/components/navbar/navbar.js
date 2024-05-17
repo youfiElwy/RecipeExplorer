@@ -11,11 +11,8 @@ function Navbar() {
 	const logout = (e) => {
 		e.preventDefault();
 		setIsLoading(true);
-		document.cookie.split(';').forEach((c) => {
-			document.cookie = c
-				.replace(/^ +/, '')
-				.replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
-		});
+		sessionStorage.removeItem('token');
+		sessionStorage.removeItem('userId');
 
 		setTimeout(() => {
 			navigate('/');

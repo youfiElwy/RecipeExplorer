@@ -121,9 +121,8 @@ const userController = {
 			);
 			console.log(token);
 			return res
-				.cookie('jwt', { token, id: user.Items[0].userID.N })
 				.status(200)
-				.json({ message: 'You are logged in' });
+				.json({ token, id: user.Items[0].userID.N ,message: 'You are logged in' });
 		} catch (e) {
 			return res.status(500).json({ error: 'Internal Server Error!' });
 		}

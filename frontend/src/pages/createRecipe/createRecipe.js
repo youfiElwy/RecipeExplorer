@@ -4,7 +4,7 @@ import Footer from '../../components/footer/footer';
 import RecipeImage from '../../assets/images/recipeImage.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import  ip  from '../../not_dot_env';
+import ip from '../../not_dot_env';
 function CreateRecipePage() {
 	const navigate = useNavigate();
 	const [title, setTitle] = useState('');
@@ -90,6 +90,7 @@ function CreateRecipePage() {
 			category: category,
 			ingredients: ingredients,
 			image: file,
+			token: sessionStorage.getItem('token'),
 		};
 		const response = await axios
 			.post(`${ip}recipe/create`, body, {

@@ -12,7 +12,10 @@ function RecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get(`${ip}recipe/getall`, {
+			const response = await axios.post(`${ip}recipe/getall`,
+			{
+				token: sessionStorage.getItem('token'),
+			}, {
 				withCredentials: true,
 			});
 			if (response.data && response.data.error) {

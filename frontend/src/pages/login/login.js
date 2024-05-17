@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import axios from 'axios';
-import  ip  from '../../not_dot_env';
+import ip from '../../not_dot_env';
 function LoginPage() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
@@ -35,6 +35,12 @@ function LoginPage() {
 					)
 					.then((response) => {
 						if (response.status === 200) {
+							// save cookie from res data token
+							console.log('response.data.token', response.data.token);
+							console.log('response.data.id', response.data.id);
+							// saving to session storage
+							sessionStorage.setItem('token', response.data.token);
+							sessionStorage.setItem('userId', response.data.id);
 							navigate('/home');
 						} else {
 							alert('Login failed. Please try again.');
@@ -42,7 +48,8 @@ function LoginPage() {
 					});
 			} catch (err) {
 				// alert('Login failed. Please try again.' + err.response.data.error);
-				alert(`${ip}auth/signIn`);
+				// alert(`${ip}auth/signIn`);
+				// console.log('DAMN BRUH, ERROR', err.response.data.error);
 			}
 			setIsLoading(false);
 		}

@@ -10,29 +10,28 @@ import CreateRecipePage from './pages/createRecipe/createRecipe';
 
 function App() {
 	return (
-		<>	
-			{ document.cookie ?
-			<Routes>
-				<Route path="/" element={<LoginPage />} />
-				<Route path="/signup" element={<SignupPage />} />
-				<Route path="/home" element={<HomePage />} />
-				<Route path="/myrecipes" element={<MyRecipesPage />} />
-				<Route path="/recipe/:id" element={<RecipeDetailsPage />} />
-				<Route path="/newrecipe" element={<CreateRecipePage />} />
-			</Routes>
-			:
-			<Routes>
-				<Route path="/" element={<LoginPage />} />
-				<Route path="/signup" element={<SignupPage />} />
-				<Route path="/home" element={<LoginPage />} />
-				<Route path="/myrecipes" element={<LoginPage />} />
-				<Route path="/recipe/:id" element={<LoginPage />} />
-				<Route path="/newrecipe" element={<LoginPage />} />
-			</Routes>
-			}
+		<>
+			{sessionStorage.getItem("token") ? (
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/signup" element={<SignupPage />} />
+					<Route path="/home" element={<HomePage />} />
+					<Route path="/myrecipes" element={<MyRecipesPage />} />
+					<Route path="/recipe/:id" element={<RecipeDetailsPage />} />
+					<Route path="/newrecipe" element={<CreateRecipePage />} />
+				</Routes>
+			) : (
+				<Routes>
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/signup" element={<SignupPage />} />
+					<Route path="/home" element={<LoginPage />} />
+					<Route path="/myrecipes" element={<LoginPage />} />
+					<Route path="/recipe/:id" element={<LoginPage />} />
+					<Route path="/newrecipe" element={<LoginPage />} />
+				</Routes>
+			)}
 		</>
 	);
 }
 
 export default App;
-

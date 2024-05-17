@@ -8,6 +8,11 @@ const BACKEND_PORT = process.env.BACKEND_PORT;
 const FRONTEND_PORT = process.env.FRONTEND_PORT;
 const authenticationMiddleware = require('./middleware/authenticationMiddleware');
 
+const multer = require("multer");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 app.use((req, res, next) => {
 	console.log('Time:', Date.now());
 	console.log('Request From:', req.headers.origin);
@@ -20,36 +25,27 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.get('/', (req, res) => {
+	res.status(200).send('Server is working');
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 
-// Enable CORS for all requests
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Credentials", "true"); // Allow credentials
-  next();
-});
-// app.use(
-// 	cors({
-// 		origin: "http://" + IP.address() + ":" + FRONTEND_PORT + "/",
-// 		methods: ['GET', 'POST', 'DELETE', 'PUT'],
-// 		credentials: true,
-// 	})
-// );
-
-app.use((req, res, next) => {
-	console.log('Request Passed CORS Check');
-	next();
-});
-
-app.get('/health', (req, res) => {
-	res.send('Server is working');
-});
+app.use(
+	cors({
+		origin: 'http://localhost:3000',
+		methods: ['GET', 'POST', 'DELETE', 'PUT'],
+		credentials: true,
+	})
+);
 
 app.use('/auth', require('./routes/public/auth'));
+
+app.put('/recipe/update/:id', upload.single('image'));
+app.post('/recipe/create', upload.single('image'));
 
 app.use(authenticationMiddleware);
 
