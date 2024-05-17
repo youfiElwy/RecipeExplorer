@@ -120,7 +120,17 @@ const userController = {
 			);
 			console.log(token);
 			return res
-				.cookie('jwt', { token, id: user.Items[0].userID.N })
+				.cookie(
+					'jwt',
+					{ token, id: user.Items[0].userID.N },
+					{
+						sameSite: 'None',
+						httpOnly: true,
+						secure: true,
+						// path: '/',
+						// domain: '.example.com',
+					}
+				)
 				.status(200)
 				.json({ message: 'You are logged in' });
 		} catch (e) {

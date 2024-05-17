@@ -4,7 +4,7 @@ import ClickIcon from '../../assets/svg/click';
 import mockData from '../../components/recipeList/mockData';
 import axios from 'axios';
 import RecipeDetailsSkeleton from '../recipeDetailsSkeleton/recipeDetailsSkeleton';
-
+import ip from '../../not_dot_env';
 function RecipeDetailsPage() {
 	const navigate = useNavigate();
 	const { id } = useParams(); // Get recipe ID from URL parameter
@@ -27,7 +27,7 @@ function RecipeDetailsPage() {
 		// Simulate fetching recipe from backend based on ID
 		async function fetchData() {
 			// getting recipe by id /get/:id
-			const response = await axios.get('http://52.91.223.162:5000/recipe/get/' + id, {
+			const response = await axios.get(`${ip}recipe/get/` + id, {
 				withCredentials: true,
 			});
 
@@ -83,7 +83,7 @@ function RecipeDetailsPage() {
 				ingredients: updatedRecipe.ingredients,
 				image: updatedImage,
 			};
-			const response = await axios.put('http://52.91.223.162:5000/recipe/update/' + id, body, {
+			const response = await axios.put(`${ip}recipe/get/` + id, body, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				withCredentials: true,
 			});
@@ -145,7 +145,7 @@ function RecipeDetailsPage() {
 			setIsDeleting(true);
 			// deleting recipe by id /delete/:id
 			const response = await axios
-				.delete('http://52.91.223.162:5000/recipe/delete/' + id, {
+				.delete(`${ip}recipe/get/` + id, {
 					withCredentials: true,
 				})
 				.then((response) => {

@@ -4,7 +4,7 @@ import RecipeCard from '../../components/recipeCard/recipeCard';
 import mockData from '../recipeList/mockData';
 import axios from 'axios';
 import RecipeCardSkeleton from '../recipeCardSkeleton/recipeCardSkeleton';
-
+import ip from '../../not_dot_env';
 function MyRecipeList() {
 	const navigate = useNavigate();
 	const [recipes, setRecipes] = useState([]);
@@ -14,7 +14,7 @@ function MyRecipeList() {
 
 	useEffect(() => {
 		async function fetchData() {
-			const response = await axios.get('http://52.91.223.162:5000/recipe/getuserrecipes', {
+			const response = await axios.get(`${ip}recipe/getuserrecipes`, {
 				withCredentials: true,
 			});
 			if (response.status != 200 && response.data && response.data.error) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import axios from 'axios';
-
+import ip from '../../not_dot_env';
 function LoginPage() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
@@ -26,7 +26,7 @@ function LoginPage() {
 			try {
 				const response = await axios
 					.post(
-						'http://52.91.223.162:5000/auth/signIn',
+						`${ip}auth/signIn`,
 						{
 							email: email,
 							password: password,
@@ -41,7 +41,9 @@ function LoginPage() {
 						}
 					});
 			} catch (err) {
-				alert('Login failed. Please try again.' + err.response.data.error);
+				// alert('Login failed. Please try again.' + err.response.data.error);
+				// alert(`${ip}auth/signIn`);
+				// console.log('DAMN BRUH, ERROR', err.response.data.error);
 			}
 			setIsLoading(false);
 		}

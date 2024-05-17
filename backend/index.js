@@ -15,6 +15,10 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.get('/', (req, res) => {
+	res.status(200).send('Server is working');
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -22,7 +26,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: 'http://52.91.223.162:3000',
+		origin: 'http://front-end-1336704247.us-east-1.elb.amazonaws.com',
 		methods: ['GET', 'POST', 'DELETE', 'PUT'],
 		credentials: true,
 	})
