@@ -211,7 +211,7 @@ const recipeController = {
           return res.status(400).json({ error: 'Unauthorized!' });
         }
         
-        const imageName = recipe.image;
+        let imageName = recipe.image;
         console.log("Image name: ", imageName);
 
         const { title, description, ingredients, category } = req.body;
@@ -226,7 +226,7 @@ const recipeController = {
           console.log("Deleting file: ", imageName);
           const deleteResult = await deleteFile(imageName).then((data) => data).catch((error) => error);
           console.log("DeleteD result: ", imageName);
-          // imageName = imageName.split('.')[0] + '.' + req.file.mimetype.split('/')[1];
+          imageName = crypto.randomBytes(32).toString('hex') + '.' + req.file.mimetype.split('/')[1]
           const result = await uploadFile(req.file.buffer, imageName, req.file.mimetype).then((data) => data).catch((error) => error);
 
           console.log("Result: ", result);
