@@ -19,25 +19,12 @@ const s3Client = new S3Client({
 
 module.exports = {
   async getImage(key) {
-    const params = {
-      Bucket: scaledBucketName,
-      Key: key
-    }
-
-    // https://aws.amazon.com/blogs/developer/generate-presigned-url-modular-aws-sdk-javascript/
-    const command = new GetObjectCommand(params);
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
+    const url = "https://d3tctp88ma7e3h.cloudfront.net/" + key;
 
     return url
   },
   async getSignedUrl(key) {
-    const params = {
-      Bucket: scaledBucketName,
-      Key: key
-    }
-  
-    const command = new GetObjectCommand(params);
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
+    const url = "https://d3tctp88ma7e3h.cloudfront.net/" + key;
   
     return url;
   },
