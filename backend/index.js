@@ -8,7 +8,7 @@ const BACKEND_PORT = process.env.BACKEND_PORT;
 const FRONTEND_PORT = process.env.FRONTEND_PORT;
 const authenticationMiddleware = require('./middleware/authenticationMiddleware');
 
-const multer = require("multer");
+const multer = require('multer');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -16,8 +16,11 @@ const upload = multer({ storage: storage });
 app.use((req, res, next) => {
 	console.log('Time:', Date.now());
 	console.log('Request From:', req.headers.origin);
-	console.log('AcceptableURL:', ("http://" + IP.address() + ":" + FRONTEND_PORT));
-	console.log('Request Accepted:', req.headers.origin == ("http://" + IP.address() + ":" + FRONTEND_PORT));
+	console.log('AcceptableURL:', 'http://' + IP.address() + ':' + FRONTEND_PORT);
+	console.log(
+		'Request Accepted:',
+		req.headers.origin == 'http://' + IP.address() + ':' + FRONTEND_PORT
+	);
 	console.log('Method:', req.method);
 	console.log('Request URL:', req.url);
 	console.log('Request Body:', req.body);
@@ -36,7 +39,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: 'http://localhost:3000',
+		origin: 'http://front-end-1336704247.us-east-1.elb.amazonaws.com',
 		methods: ['GET', 'POST', 'DELETE', 'PUT'],
 		credentials: true,
 	})
