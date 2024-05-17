@@ -36,8 +36,8 @@ const userController = {
 			const { userName, email, password } = req.body;
 
 			if (!email) {
-				console.log('Email is required  11 1 1 1 1 ');
-				return res.status(400).json({ error: 'Email is required 1 1 1 1 ' });
+				console.log('Email is required');
+				return res.status(400).json({ error: 'Email is required' });
 			}
 
 			if (!userName) {
@@ -51,8 +51,8 @@ const userController = {
 				.catch((error) => error);
 
 			if (userExists.Count > 0) {
-				console.log('Email is already in use 1 1 1');
-				return res.status(400).json({ error: 'Email already in use 1 1 1'  });
+				console.log('Email is already in use');
+				return res.status(400).json({ error: 'Email already in use' });
 			}
 
 			if (!password) {
@@ -85,8 +85,8 @@ const userController = {
 			const { email, password } = req.body;
 
 			if (!email) {
-				console.log('Email is required 1 11 1 1 1');
-				return res.status(400).json({ error: 'Email is required2 11 1 1 11' });
+				console.log('Email is required');
+				return res.status(400).json({ error: 'Email is required' });
 			}
 
 			if (!password) {
@@ -120,7 +120,17 @@ const userController = {
 			);
 			console.log(token);
 			return res
-				.cookie('jwt', { token, id: user.Items[0].userID.N })
+				.cookie(
+					'jwt',
+					{ token, id: user.Items[0].userID.N },
+					{
+						sameSite: 'None',
+						httpOnly: true,
+						secure: true,
+						// path: '/',
+						// domain: '.example.com',
+					}
+				)
 				.status(200)
 				.json({ message: 'You are logged in' });
 		} catch (e) {
