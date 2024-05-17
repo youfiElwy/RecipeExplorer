@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import loginbg from '../../assets/images/loginbg.jpg';
 import axios from 'axios';
-import  ip  from '../../not_dot_env';
+import ip from '../../not_dot_env';
 function LoginPage() {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
@@ -42,7 +42,8 @@ function LoginPage() {
 					});
 			} catch (err) {
 				// alert('Login failed. Please try again.' + err.response.data.error);
-				alert(`${ip}auth/signIn`);
+				// alert(`${ip}auth/signIn`);
+				// console.log('DAMN BRUH, ERROR', err.response.data.error);
 			}
 			setIsLoading(false);
 		}

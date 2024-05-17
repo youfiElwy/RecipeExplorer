@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL,
+		origin: 'http://front-end-1336704247.us-east-1.elb.amazonaws.com',
 		methods: ['GET', 'POST', 'DELETE', 'PUT'],
 		credentials: true,
 	})
