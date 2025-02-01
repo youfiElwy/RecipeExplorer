@@ -177,6 +177,4 @@ Below is a high-level architecture diagram of how AWS services are integrated in
    - Use EC2 instances to host the backend and frontend.
    - Configure ELB and ASG for scalability.
 
----
 
-This README highlights the **AWS-centric approach** of **RecipeExplorer**, showcasing how AWS services are leveraged to build a scalable, secure, and high-performance application.
